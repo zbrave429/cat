@@ -18,22 +18,10 @@
  */
 package com.dianping.cat.message.io;
 
-import java.net.InetSocketAddress;
-import java.net.SocketAddress;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.ThreadFactory;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicInteger;
-
+import com.dianping.cat.configuration.ClientConfigManager;
+import com.dianping.cat.message.internal.MessageIdFactory;
 import io.netty.bootstrap.Bootstrap;
-import io.netty.channel.Channel;
-import io.netty.channel.ChannelFuture;
-import io.netty.channel.ChannelHandlerContext;
-import io.netty.channel.ChannelInitializer;
-import io.netty.channel.ChannelOption;
-import io.netty.channel.EventLoopGroup;
-import io.netty.channel.SimpleChannelInboundHandler;
+import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import org.codehaus.plexus.logging.Logger;
@@ -42,8 +30,12 @@ import org.unidal.helper.Threads.Task;
 import org.unidal.lookup.util.StringUtils;
 import org.unidal.tuple.Pair;
 
-import com.dianping.cat.configuration.ClientConfigManager;
-import com.dianping.cat.message.internal.MessageIdFactory;
+import java.net.InetSocketAddress;
+import java.net.SocketAddress;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class ChannelManager implements Task {
 
@@ -69,13 +61,10 @@ public class ChannelManager implements Task {
 		m_configManager = configManager;
 		m_idFactory = idFactory;
 
-		EventLoopGroup group = new NioEventLoopGroup(1, new ThreadFactory() {
-			@Override
-			public Thread newThread(Runnable r) {
-				Thread t = new Thread(r);
-				t.setDaemon(true);
-				return t;
-			}
+		EventLoopGroup group = new NioEventLoopGroup(1, r -> {
+			Thread t = new Thread(r);
+			t.setDaemon(true);
+			return t;
 		});
 
 		Bootstrap bootstrap = new Bootstrap();
@@ -83,8 +72,7 @@ public class ChannelManager implements Task {
 		bootstrap.option(ChannelOption.SO_KEEPALIVE, true);
 		bootstrap.handler(new ChannelInitializer<Channel>() {
 			@Override
-			protected void initChannel(Channel ch) throws Exception {
-			}
+			protected void initChannel(Channel ch) {}
 		});
 		m_bootstrap = bootstrap;
 
@@ -179,7 +167,7 @@ public class ChannelManager implements Task {
 				int count = m_attempts.incrementAndGet();
 
 				if (count % 1000 == 0 || count == 1) {
-					m_logger.warn("channel buf is is close when send msg! Attempts: " + count);
+					m_logger.warn("channel buf is close when send msg! Attempts: " + count);
 				}
 			}
 		}
@@ -330,7 +318,7 @@ public class ChannelManager implements Task {
 		} catch (Exception e) {
 			m_logger.error(e.getMessage(), e);
 		}
-		return new ArrayList<InetSocketAddress>();
+		return new ArrayList<>();
 	}
 
 	private void reconnectDefaultServer(ChannelFuture activeFuture, List<InetSocketAddress> serverAddresses) {
@@ -361,9 +349,9 @@ public class ChannelManager implements Task {
 		String routerConfig = m_configManager.getRouters();
 
 		if (!StringUtils.isEmpty(routerConfig) && !routerConfig.equals(m_activeChannelHolder.getActiveServerConfig())) {
-			return new Pair<Boolean, String>(true, routerConfig);
+			return new Pair<>(true, routerConfig);
 		} else {
-			return new Pair<Boolean, String>(false, routerConfig);
+			return new Pair<>(false, routerConfig);
 		}
 	}
 

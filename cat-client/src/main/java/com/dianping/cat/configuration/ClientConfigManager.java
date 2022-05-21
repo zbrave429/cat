@@ -18,12 +18,12 @@
  */
 package com.dianping.cat.configuration;
 
-import java.io.File;
-import java.util.List;
-
 import com.dianping.cat.configuration.client.entity.Domain;
 import com.dianping.cat.configuration.client.entity.Server;
 import com.dianping.cat.message.spi.MessageTree;
+
+import java.io.File;
+import java.util.List;
 
 public interface ClientConfigManager {
 
@@ -41,9 +41,20 @@ public interface ClientConfigManager {
 
 	public void initialize(File configFile) throws Exception;
 
-	public boolean isAtomicMessage(MessageTree tree);
+	/**
+	 * 判断是否原子消息，如果是原子消息则放入原子消息队列，合并后发布，否则直接放到发送队列
+	 * @param tree 消息
+	 * @return bool
+	 */
+	boolean isAtomicMessage(MessageTree tree);
 
-	public boolean isBlock();
+	/**
+	 * 检查是否拦截发送
+	 * 	可以通过routerConfig配置
+	 *
+	 * @return bool
+	 */
+	boolean isBlock();
 
 	public boolean isCatEnabled();
 

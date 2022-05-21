@@ -18,6 +18,20 @@
  */
 package com.dianping.cat.status;
 
+import com.dianping.cat.Cat;
+import com.dianping.cat.configuration.ClientConfigManager;
+import com.dianping.cat.configuration.NetworkInterfaceManager;
+import com.dianping.cat.message.*;
+import com.dianping.cat.message.internal.MilliSecondTimer;
+import com.dianping.cat.message.spi.MessageStatistics;
+import com.dianping.cat.status.model.entity.Extension;
+import com.dianping.cat.status.model.entity.StatusInfo;
+import org.codehaus.plexus.personality.plexus.lifecycle.phase.Initializable;
+import org.codehaus.plexus.personality.plexus.lifecycle.phase.InitializationException;
+import org.unidal.helper.Threads.Task;
+import org.unidal.lookup.annotation.Inject;
+import org.unidal.lookup.annotation.Named;
+
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.Calendar;
@@ -25,25 +39,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.codehaus.plexus.personality.plexus.lifecycle.phase.Initializable;
-import org.codehaus.plexus.personality.plexus.lifecycle.phase.InitializationException;
-import org.unidal.helper.Threads.Task;
-import org.unidal.lookup.annotation.Inject;
-import org.unidal.lookup.annotation.Named;
-
-import com.dianping.cat.Cat;
-import com.dianping.cat.configuration.ClientConfigManager;
-import com.dianping.cat.configuration.NetworkInterfaceManager;
-import com.dianping.cat.message.Event;
-import com.dianping.cat.message.Heartbeat;
-import com.dianping.cat.message.Message;
-import com.dianping.cat.message.MessageProducer;
-import com.dianping.cat.message.Transaction;
-import com.dianping.cat.message.internal.MilliSecondTimer;
-import com.dianping.cat.message.spi.MessageStatistics;
-import com.dianping.cat.status.model.entity.Extension;
-import com.dianping.cat.status.model.entity.StatusInfo;
-
+/**
+ * 系统监控上报task
+ */
 @Named
 public class StatusUpdateTask implements Task, Initializable {
 	@Inject
@@ -169,7 +167,7 @@ public class StatusUpdateTask implements Task, Initializable {
 
 		while (m_active) {
 			long start = MilliSecondTimer.currentTimeMillis();
-
+			// 通过此参数配置可以控制是否上报系统监控信息
 			if (m_manager.isCatEnabled()) {
 				Transaction t = cat.newTransaction("System", "Status");
 				Heartbeat h = cat.newHeartbeat("Heartbeat", m_ipAddress);

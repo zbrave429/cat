@@ -32,7 +32,7 @@ public enum NetworkInterfaceManager {
 
 	private InetAddress m_local;
 
-	private NetworkInterfaceManager() {
+	NetworkInterfaceManager() {
 		load();
 	}
 
@@ -88,6 +88,9 @@ public enum NetworkInterfaceManager {
 		return value;
 	}
 
+	/**
+	 * 通过设置系统参数host.ip改变服务IP地址
+	 */
 	private void load() {
 		String ip = getProperty("host.ip");
 

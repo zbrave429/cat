@@ -48,12 +48,12 @@ public class TransactionAggregator {
 	public ConcurrentHashMap<String, ConcurrentHashMap<String, TransactionData>> getAndResetTransactions() {
 		ConcurrentHashMap<String, ConcurrentHashMap<String, TransactionData>> cloned = m_transactions;
 
-		m_transactions = new ConcurrentHashMap<String, ConcurrentHashMap<String, TransactionData>>();
+		m_transactions = new ConcurrentHashMap<>();
 
 		for (Entry<String, ConcurrentHashMap<String, TransactionData>> entry : cloned.entrySet()) {
 			String type = entry.getKey();
 
-			m_transactions.putIfAbsent(type, new ConcurrentHashMap<String, TransactionData>());
+			m_transactions.putIfAbsent(type, new ConcurrentHashMap<>());
 		}
 
 		return cloned;
@@ -127,10 +127,12 @@ public class TransactionAggregator {
 						Transaction tmp = Cat.newTransaction(data.getType(), data.getName());
 						StringBuilder sb = new StringBuilder(32);
 
-						sb.append(CatConstants.BATCH_FLAG).append(data.getCount().get()).append(CatConstants.SPLIT);
-						sb.append(data.getFail().get()).append(CatConstants.SPLIT);
-						sb.append(data.getSum().get()).append(CatConstants.SPLIT);
-						sb.append(data.getDurationString()).append(CatConstants.SPLIT).append(data.getLongDurationString());
+						sb.append(CatConstants.BATCH_FLAG)
+								.append(data.getCount().get()).append(CatConstants.SPLIT)
+								.append(data.getFail().get()).append(CatConstants.SPLIT)
+								.append(data.getSum().get()).append(CatConstants.SPLIT)
+								.append(data.getDurationString()).append(CatConstants.SPLIT)
+								.append(data.getLongDurationString());
 
 						tmp.addData(sb.toString());
 						tmp.setSuccessStatus();

@@ -18,14 +18,14 @@
  */
 package com.dianping.cat.message.internal;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
 import com.dianping.cat.Cat;
 import com.dianping.cat.message.Message;
 import com.dianping.cat.message.Transaction;
 import com.dianping.cat.message.spi.MessageManager;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 public class DefaultTransaction extends AbstractMessage implements Transaction {
 	private long m_durationInMicro = -1; // must be less than 0
@@ -54,7 +54,7 @@ public class DefaultTransaction extends AbstractMessage implements Transaction {
 	@Override
 	public DefaultTransaction addChild(Message message) {
 		if (m_children == null) {
-			m_children = new ArrayList<Message>();
+			m_children = new ArrayList<>();
 		}
 
 		if (message != null) {

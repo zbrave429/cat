@@ -19,12 +19,29 @@
 package com.dianping.cat.message.spi;
 
 public interface MessageQueue {
-	public boolean offer(MessageTree tree);
 
-	public MessageTree peek();
+	/**
+	 * 向队列尾部添加元素
+	 *
+	 * @param tree 元素
+	 * @return true - 添加成功， false-添加失败，队列可能已满
+	 */
+	boolean offer(MessageTree tree);
 
-	public MessageTree poll();
+	/**
+	 * 检索但不删除此队列的头
+	 *
+	 * @return 返回队首元素
+	 */
+	MessageTree peek();
+
+	/**
+	 * 检索并移除此队列的头
+	 *
+	 * @return 返回队首元素
+	 */
+	MessageTree poll();
 
 	// the current size of the queue
-	public int size();
+	int size();
 }

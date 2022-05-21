@@ -18,19 +18,19 @@
  */
 package com.dianping.cat.message.io;
 
+import com.dianping.cat.message.spi.MessageQueue;
+import com.dianping.cat.message.spi.MessageTree;
+
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.TimeUnit;
 
-import com.dianping.cat.message.spi.MessageQueue;
-import com.dianping.cat.message.spi.MessageTree;
-
 public class DefaultMessageQueue implements MessageQueue {
 
-	private BlockingQueue<MessageTree> m_queue;
+	private final BlockingQueue<MessageTree> m_queue;
 
 	public DefaultMessageQueue(int size) {
-		m_queue = new ArrayBlockingQueue<MessageTree>(size);
+		m_queue = new ArrayBlockingQueue<>(size);
 	}
 
 	@Override

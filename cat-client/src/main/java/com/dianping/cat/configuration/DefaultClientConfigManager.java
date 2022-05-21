@@ -18,15 +18,12 @@
  */
 package com.dianping.cat.configuration;
 
-import java.io.File;
-import java.io.InputStream;
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-
+import com.dianping.cat.Cat;
+import com.dianping.cat.configuration.client.entity.ClientConfig;
+import com.dianping.cat.configuration.client.entity.Domain;
+import com.dianping.cat.configuration.client.entity.Server;
+import com.dianping.cat.configuration.client.transform.DefaultSaxParser;
+import com.dianping.cat.message.spi.MessageTree;
 import com.site.helper.JsonBuilder;
 import com.site.helper.Splitters;
 import org.codehaus.plexus.logging.LogEnabled;
@@ -37,12 +34,9 @@ import org.unidal.helper.Files;
 import org.unidal.helper.Urls;
 import org.unidal.lookup.annotation.Named;
 
-import com.dianping.cat.Cat;
-import com.dianping.cat.configuration.client.entity.ClientConfig;
-import com.dianping.cat.configuration.client.entity.Domain;
-import com.dianping.cat.configuration.client.entity.Server;
-import com.dianping.cat.configuration.client.transform.DefaultSaxParser;
-import com.dianping.cat.message.spi.MessageTree;
+import java.io.File;
+import java.io.InputStream;
+import java.util.*;
 
 @Named(type = ClientConfigManager.class)
 public class DefaultClientConfigManager implements LogEnabled, ClientConfigManager, Initializable {
@@ -275,9 +269,9 @@ public class DefaultClientConfigManager implements LogEnabled, ClientConfigManag
 			KVConfig routerConfig = (KVConfig) m_jsonBuilder.parse(content.trim(), KVConfig.class);
 
 			m_routers = routerConfig.getValue("routers");
-			m_block = Boolean.valueOf(routerConfig.getValue("block").trim());
+			m_block = Boolean.parseBoolean(routerConfig.getValue("block").trim());
 
-			m_sampleRate = Double.valueOf(routerConfig.getValue("sample").trim());
+			m_sampleRate = Double.parseDouble(routerConfig.getValue("sample").trim());
 			if (m_sampleRate <= 0) {
 				m_sampleRate = 0;
 			}

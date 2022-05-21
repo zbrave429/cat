@@ -18,22 +18,6 @@
  */
 package com.dianping.cat.message.io;
 
-import io.netty.buffer.ByteBuf;
-import io.netty.channel.ChannelFuture;
-
-import java.net.InetSocketAddress;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.atomic.AtomicInteger;
-
-import org.codehaus.plexus.logging.LogEnabled;
-import org.codehaus.plexus.logging.Logger;
-import org.unidal.helper.Threads;
-import org.unidal.helper.Threads.Task;
-import org.unidal.lookup.annotation.Inject;
-import org.unidal.lookup.annotation.Named;
-
 import com.dianping.cat.ApplicationSettings;
 import com.dianping.cat.analyzer.LocalAggregator;
 import com.dianping.cat.configuration.ClientConfigManager;
@@ -48,14 +32,34 @@ import com.dianping.cat.message.spi.codec.NativeMessageCodec;
 import com.dianping.cat.message.spi.internal.DefaultMessageTree;
 import com.dianping.cat.status.StatusExtension;
 import com.dianping.cat.status.StatusExtensionRegister;
+import io.netty.buffer.ByteBuf;
+import io.netty.channel.ChannelFuture;
+import org.codehaus.plexus.logging.LogEnabled;
+import org.codehaus.plexus.logging.Logger;
+import org.unidal.helper.Threads;
+import org.unidal.helper.Threads.Task;
+import org.unidal.lookup.annotation.Inject;
+import org.unidal.lookup.annotation.Named;
+
+import java.net.InetSocketAddress;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 
 @Named
 public class TcpSocketSender implements Task, MessageSender, LogEnabled {
 
 	public static final int SIZE = ApplicationSettings.getQueueSize();
 
+	/**
+	 * 单次发送消息数量
+	 */
 	private static final int MAX_CHILD_NUMBER = 200;
 
+	/**
+	 * 消息发出的最大延迟时间 30s
+	 */
 	private static final int MAX_DURATION = 1000 * 30;
 
 	public static final long HOUR = 1000 * 60 * 60L;
@@ -71,9 +75,9 @@ public class TcpSocketSender implements Task, MessageSender, LogEnabled {
 	@Inject
 	private MessageIdFactory m_factory;
 
-	private MessageQueue m_queue = new DefaultMessageQueue(SIZE);
+	private final MessageQueue m_queue = new DefaultMessageQueue(SIZE);
 
-	private MessageQueue m_atomicQueue = new DefaultMessageQueue(SIZE);
+	private final MessageQueue m_atomicQueue = new DefaultMessageQueue(SIZE);
 
 	private ChannelManager m_channelManager;
 
@@ -97,16 +101,16 @@ public class TcpSocketSender implements Task, MessageSender, LogEnabled {
 	public void initialize(List<InetSocketAddress> addresses) {
 		m_channelManager = new ChannelManager(m_logger, addresses, m_configManager, m_factory);
 
+		// 启动消息发送任务
 		Threads.forGroup("cat").start(this);
+		// 启动socket连接管理任务
 		Threads.forGroup("cat").start(m_channelManager);
 
-		Runtime.getRuntime().addShutdownHook(new Thread() {
-			@Override
-			public void run() {
-				m_logger.info("shut down cat client in runtime shut down hook!");
-				shutdown();
-			}
-		});
+		// 注册服务停止钩子函数
+		Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+			m_logger.info("shut down cat client in runtime shut down hook!");
+			shutdown();
+		}));
 
 		StatusExtensionRegister.getInstance().register(new StatusExtension() {
 
@@ -122,7 +126,7 @@ public class TcpSocketSender implements Task, MessageSender, LogEnabled {
 
 			@Override
 			public Map<String, String> getProperties() {
-				Map<String, String> map = new HashMap<String, String>();
+				Map<String, String> map = new HashMap<>();
 
 				map.put("msg-queue", String.valueOf(m_queue.size()));
 				map.put("atomic-queue", String.valueOf(m_queue.size()));
@@ -145,6 +149,11 @@ public class TcpSocketSender implements Task, MessageSender, LogEnabled {
 		tree = null;
 	}
 
+	/**
+	 * 合并消息树，合并后的消息树最大有200个子消息树
+	 * @param handler
+	 * @return
+	 */
 	private MessageTree mergeTree(MessageQueue handler) {
 		int max = MAX_CHILD_NUMBER;
 		DefaultTransaction tran = new DefaultTransaction("System", "_CatMergeTree", null);
@@ -190,6 +199,7 @@ public class TcpSocketSender implements Task, MessageSender, LogEnabled {
 				MessageTree tree = mergeTree(m_atomicQueue);
 				boolean result = m_queue.offer(tree);
 
+				// TODO 如果发送队列offer失败了，合并后的tree消息会被丢弃吗？
 				if (!result) {
 					logQueueFullInfo(tree);
 				}

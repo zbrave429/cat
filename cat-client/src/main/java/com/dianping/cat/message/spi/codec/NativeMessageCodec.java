@@ -18,28 +18,18 @@
  */
 package com.dianping.cat.message.spi.codec;
 
+import com.dianping.cat.message.*;
+import com.dianping.cat.message.internal.*;
+import com.dianping.cat.message.spi.MessageCodec;
+import com.dianping.cat.message.spi.MessageTree;
+import com.dianping.cat.message.spi.internal.DefaultMessageTree;
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.PooledByteBufAllocator;
+
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Stack;
-
-import io.netty.buffer.ByteBuf;
-import io.netty.buffer.PooledByteBufAllocator;
-
-import com.dianping.cat.message.Event;
-import com.dianping.cat.message.Heartbeat;
-import com.dianping.cat.message.Message;
-import com.dianping.cat.message.Metric;
-import com.dianping.cat.message.Trace;
-import com.dianping.cat.message.Transaction;
-import com.dianping.cat.message.internal.DefaultEvent;
-import com.dianping.cat.message.internal.DefaultHeartbeat;
-import com.dianping.cat.message.internal.DefaultMetric;
-import com.dianping.cat.message.internal.DefaultTrace;
-import com.dianping.cat.message.internal.DefaultTransaction;
-import com.dianping.cat.message.spi.MessageCodec;
-import com.dianping.cat.message.spi.MessageTree;
-import com.dianping.cat.message.spi.internal.DefaultMessageTree;
 
 public class NativeMessageCodec implements MessageCodec {
 
@@ -397,11 +387,11 @@ public class NativeMessageCodec implements MessageCodec {
 	}
 
 	private static class Context {
-		private static Charset UTF8 = Charset.forName("UTF-8");
+		private static final Charset UTF8 = StandardCharsets.UTF_8;
 
 		private MessageTree m_tree;
 
-		private Stack<DefaultTransaction> m_parents = new Stack<DefaultTransaction>();
+		private Stack<DefaultTransaction> m_parents = new Stack<>();
 
 		private byte[] m_data = new byte[256];
 

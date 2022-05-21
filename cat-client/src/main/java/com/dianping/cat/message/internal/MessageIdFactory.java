@@ -18,6 +18,12 @@
  */
 package com.dianping.cat.message.internal;
 
+import com.dianping.cat.Cat;
+import com.dianping.cat.configuration.NetworkInterfaceManager;
+import com.dianping.cat.util.CleanupHelper;
+import org.unidal.helper.Splitters;
+import org.unidal.lookup.annotation.Named;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
@@ -32,13 +38,6 @@ import java.util.Map.Entry;
 import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
-
-import org.unidal.helper.Splitters;
-import org.unidal.lookup.annotation.Named;
-
-import com.dianping.cat.Cat;
-import com.dianping.cat.configuration.NetworkInterfaceManager;
-import com.dianping.cat.util.CleanupHelper;
 
 @Named
 public class MessageIdFactory {
@@ -58,7 +57,7 @@ public class MessageIdFactory {
 
 	private RandomAccessFile m_markFile;
 
-	private Map<String, AtomicInteger> m_map = new ConcurrentHashMap<String, AtomicInteger>(100);
+	private final Map<String, AtomicInteger> m_map = new ConcurrentHashMap<>(100);
 
 	private int m_retry;
 
@@ -94,7 +93,7 @@ public class MessageIdFactory {
 		File mark = new File(Cat.getCatHome(), "cat-" + domain + ".mark");
 
 		if (!mark.exists()) {
-			boolean success = true;
+			boolean success;
 			try {
 				success = mark.createNewFile();
 			} catch (Exception e) {
@@ -112,9 +111,7 @@ public class MessageIdFactory {
 
 	private File createTempFile(String domain) {
 		String tmpDir = System.getProperty("java.io.tmpdir");
-		File mark = new File(tmpDir, "cat-" + domain + ".mark");
-
-		return mark;
+		return new File(tmpDir, "cat-" + domain + ".mark");
 	}
 
 	public String getNextId() {
@@ -183,7 +180,7 @@ public class MessageIdFactory {
 		int retInt = -1;
 		try {
 			RuntimeMXBean runtimeMXBean = ManagementFactory.getRuntimeMXBean();
-			retInt = Integer.valueOf(runtimeMXBean.getName().split("@")[0]).intValue();
+			retInt = Integer.parseInt(runtimeMXBean.getName().split("@")[0]);
 		} catch (Exception e) {
 			Cat.logError(e);
 		}
@@ -276,12 +273,7 @@ public class MessageIdFactory {
 		if( !shutdownHookOn ) {
 			synchronized (this) {
 				if( !shutdownHookOn ) {
-					Runtime.getRuntime().addShutdownHook(new Thread() {
-						@Override
-						public void run() {
-							close();
-						}
-					});
+					Runtime.getRuntime().addShutdownHook(new Thread(this::close));
 				}
 			}
 			shutdownHookOn = true;
@@ -329,7 +321,7 @@ public class MessageIdFactory {
 			m_byteBuffer.putInt(m_map.size());
 
 			for (Entry<String, AtomicInteger> entry : m_map.entrySet()) {
-				byte[] bytes = entry.getKey().toString().getBytes();
+				byte[] bytes = entry.getKey().getBytes();
 
 				m_byteBuffer.putInt(bytes.length);
 				m_byteBuffer.put(bytes);

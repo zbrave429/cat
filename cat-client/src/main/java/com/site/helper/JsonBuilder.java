@@ -18,7 +18,8 @@
  */
 package com.site.helper;
 
-import java.lang.reflect.Field;
+import com.google.gson.*;
+
 import java.lang.reflect.Type;
 import java.sql.Timestamp;
 import java.text.DateFormat;
@@ -26,34 +27,19 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import com.google.gson.FieldNamingStrategy;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonDeserializationContext;
-import com.google.gson.JsonDeserializer;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonParseException;
-import com.google.gson.JsonPrimitive;
-import com.google.gson.JsonSerializationContext;
-import com.google.gson.JsonSerializer;
-
 public class JsonBuilder {
 
-	private FieldNamingStrategy m_fieldNamingStrategy = new FieldNamingStrategy() {
+	private final FieldNamingStrategy m_fieldNamingStrategy = f -> {
+		String name = f.getName();
 
-		@Override
-		public String translateName(Field f) {
-			String name = f.getName();
-
-			if (name.startsWith("m_")) {
-				return name.substring(2);
-			} else {
-				return name;
-			}
+		if (name.startsWith("m_")) {
+			return name.substring(2);
+		} else {
+			return name;
 		}
 	};
 
-	private Gson m_gson = new GsonBuilder().registerTypeAdapter(Timestamp.class, new TimestampTypeAdapter())
+	private final Gson m_gson = new GsonBuilder().registerTypeAdapter(Timestamp.class, new TimestampTypeAdapter())
 							.setDateFormat("yyyy-MM-dd HH:mm:ss").setFieldNamingStrategy(m_fieldNamingStrategy).create();
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
@@ -69,7 +55,7 @@ public class JsonBuilder {
 		return m_gson.toJson(o) + "\n";
 	}
 
-	public class TimestampTypeAdapter implements JsonSerializer<Timestamp>, JsonDeserializer<Timestamp> {
+	public static class TimestampTypeAdapter implements JsonSerializer<Timestamp>, JsonDeserializer<Timestamp> {
 		private final DateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
 		public Timestamp deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
