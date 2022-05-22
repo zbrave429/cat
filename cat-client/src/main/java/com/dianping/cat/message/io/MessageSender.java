@@ -28,8 +28,18 @@ import java.util.List;
  */
 public interface MessageSender {
 
+    /**
+     * 初始化消息发送者
+     *
+     * @param addresses 地址
+     */
     void initialize(List<InetSocketAddress> addresses);
 
+    /**
+     * 发送消息
+     *
+     * @param tree 消息
+     */
     void send(MessageTree tree);
 
     void shutdown();

@@ -64,6 +64,9 @@ public class TcpSocketSender implements Task, MessageSender, LogEnabled {
 
 	public static final long HOUR = 1000 * 60 * 60L;
 
+	/**
+	 * 消息编码解码器
+	 */
 	private MessageCodec m_codec = new NativeMessageCodec();
 
 	@Inject
@@ -72,6 +75,9 @@ public class TcpSocketSender implements Task, MessageSender, LogEnabled {
 	@Inject
 	private ClientConfigManager m_configManager;
 
+	/**
+	 * 消息ID生成器
+	 */
 	@Inject
 	private MessageIdFactory m_factory;
 
@@ -112,6 +118,7 @@ public class TcpSocketSender implements Task, MessageSender, LogEnabled {
 			shutdown();
 		}));
 
+		// TODO 为什么要设计这个？
 		StatusExtensionRegister.getInstance().register(new StatusExtension() {
 
 			@Override
@@ -221,6 +228,7 @@ public class TcpSocketSender implements Task, MessageSender, LogEnabled {
 						sendInternal(channel, tree);
 						tree.setMessage(null);
 					} else {
+						// TODO 为什么要sleep？这里是不是存在忙轮询
 						try {
 							Thread.sleep(5);
 						} catch (Exception e) {
@@ -307,10 +315,7 @@ public class TcpSocketSender implements Task, MessageSender, LogEnabled {
 
 		if (tree != null) {
 			long firstTime = tree.getMessage().getTimestamp();
-
-			if (System.currentTimeMillis() - firstTime > MAX_DURATION || queue.size() >= MAX_CHILD_NUMBER) {
-				return true;
-			}
+			return (System.currentTimeMillis() - firstTime > MAX_DURATION) || queue.size() >= MAX_CHILD_NUMBER;
 		}
 		return false;
 	}

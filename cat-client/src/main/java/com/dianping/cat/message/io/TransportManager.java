@@ -18,7 +18,14 @@
  */
 package com.dianping.cat.message.io;
 
+/**
+ * 消息传输管理
+ */
 public interface TransportManager {
 
+	/**
+	 * 获取消息发送者
+	 * @return 消息发送者
+	 */
 	MessageSender getSender();
 }

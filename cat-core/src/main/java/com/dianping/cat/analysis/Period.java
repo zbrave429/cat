@@ -18,23 +18,18 @@
  */
 package com.dianping.cat.analysis;
 
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-
-import org.codehaus.plexus.logging.Logger;
-import org.unidal.helper.Threads;
-import org.unidal.lookup.annotation.Inject;
-
 import com.dianping.cat.Cat;
 import com.dianping.cat.message.io.DefaultMessageQueue;
 import com.dianping.cat.message.spi.MessageQueue;
 import com.dianping.cat.message.spi.MessageTree;
 import com.dianping.cat.statistic.ServerStatisticManager;
+import org.codehaus.plexus.logging.Logger;
+import org.unidal.helper.Threads;
+import org.unidal.lookup.annotation.Inject;
+
+import java.text.SimpleDateFormat;
+import java.util.*;
+import java.util.Map.Entry;
 
 public class Period {
 	private static final int QUEUE_SIZE = 30000;
@@ -128,8 +123,7 @@ public class Period {
 		Date startDate = new Date(m_startTime);
 		Date endDate = new Date(m_endTime - 1);
 
-		m_logger.info(String
-								.format("Finishing %s tasks in period [%s, %s]", m_tasks.size(), df.format(startDate),	df.format(endDate)));
+		m_logger.info(String.format("Finishing %s tasks in period [%s, %s]", m_tasks.size(), df.format(startDate),	df.format(endDate)));
 
 		try {
 			for (Entry<String, List<PeriodTask>> tasks : m_tasks.entrySet()) {
@@ -140,8 +134,7 @@ public class Period {
 		} catch (Throwable e) {
 			Cat.logError(e);
 		} finally {
-			m_logger.info(String
-									.format("Finished %s tasks in period [%s, %s]", m_tasks.size(), df.format(startDate),	df.format(endDate)));
+			m_logger.info(String.format("Finished %s tasks in period [%s, %s]", m_tasks.size(), df.format(startDate),	df.format(endDate)));
 		}
 	}
 

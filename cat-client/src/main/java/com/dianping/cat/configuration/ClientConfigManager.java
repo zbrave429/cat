@@ -27,41 +27,46 @@ import java.util.List;
 
 public interface ClientConfigManager {
 
-	public Domain getDomain();
+    public Domain getDomain();
 
-	public int getMaxMessageLength();
+    public int getMaxMessageLength();
 
-	public String getRouters();
+    public String getRouters();
 
-	public double getSampleRatio();
+    public double getSampleRatio();
 
-	public List<Server> getServers();
+    /**
+     * 获取服务端配置
+     * @return
+     */
+    List<Server> getServers();
 
-	public int getTaggedTransactionCacheSize();
+    public int getTaggedTransactionCacheSize();
 
-	public void initialize(File configFile) throws Exception;
+    public void initialize(File configFile) throws Exception;
 
-	/**
-	 * 判断是否原子消息，如果是原子消息则放入原子消息队列，合并后发布，否则直接放到发送队列
-	 * @param tree 消息
-	 * @return bool
-	 */
-	boolean isAtomicMessage(MessageTree tree);
+    /**
+     * 判断是否原子消息，如果是原子消息则放入原子消息队列，合并后发布，否则直接放到发送队列
+     *
+     * @param tree 消息
+     * @return bool
+     */
+    boolean isAtomicMessage(MessageTree tree);
 
-	/**
-	 * 检查是否拦截发送
-	 * 	可以通过routerConfig配置
-	 *
-	 * @return bool
-	 */
-	boolean isBlock();
+    /**
+     * 检查是否拦截发送
+     * 可以通过服务端routerConfig配置
+     *
+     * @return bool
+     */
+    boolean isBlock();
 
-	public boolean isCatEnabled();
+    public boolean isCatEnabled();
 
-	public boolean isDumpLocked();
+    public boolean isDumpLocked();
 
-	public void refreshConfig();
+    public void refreshConfig();
 
-	public int getLongThresholdByDuration(String key, int duration);
+    public int getLongThresholdByDuration(String key, int duration);
 
 }
