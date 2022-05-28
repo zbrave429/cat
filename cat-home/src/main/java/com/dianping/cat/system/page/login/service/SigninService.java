@@ -22,7 +22,7 @@ import org.unidal.lookup.annotation.Inject;
 
 import com.dianping.cat.system.page.login.spi.ISigninService;
 
-public class SigninService implements ISigninService<SigninContext, Credential, Session> {
+public class SigninService implements ISigninService<SignInContext, Credential, Session> {
 
 	@Inject
 	private TokenManager m_tokenManager;
@@ -31,7 +31,7 @@ public class SigninService implements ISigninService<SigninContext, Credential, 
 	private SessionManager m_sessionManager;
 
 	@Override
-	public Session signin(SigninContext ctx, Credential credential) {
+	public Session signin(SignInContext ctx, Credential credential) {
 		Token token = m_sessionManager.authenticate(credential);
 
 		if (token != null) {
@@ -47,12 +47,12 @@ public class SigninService implements ISigninService<SigninContext, Credential, 
 	}
 
 	@Override
-	public void signout(SigninContext ctx) {
+	public void signout(SignInContext ctx) {
 		m_tokenManager.removeToken(ctx, Token.TOKEN);
 	}
 
 	@Override
-	public Session validate(SigninContext ctx) {
+	public Session validate(SignInContext ctx) {
 		Token token = m_tokenManager.getToken(ctx, Token.TOKEN);
 
 		if (token != null) {

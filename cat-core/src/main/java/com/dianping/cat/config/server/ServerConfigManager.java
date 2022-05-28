@@ -18,18 +18,17 @@
  */
 package com.dianping.cat.config.server;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.ExecutorService;
-import java.util.regex.Pattern;
-
+import com.dianping.cat.Cat;
+import com.dianping.cat.Constants;
+import com.dianping.cat.config.content.ContentFetcher;
+import com.dianping.cat.configuration.NetworkInterfaceManager;
+import com.dianping.cat.configuration.server.entity.*;
+import com.dianping.cat.configuration.server.transform.DefaultSaxParser;
+import com.dianping.cat.core.config.Config;
+import com.dianping.cat.core.config.ConfigDao;
+import com.dianping.cat.core.config.ConfigEntity;
+import com.dianping.cat.task.TimerSyncTask;
+import com.dianping.cat.task.TimerSyncTask.SyncHandler;
 import org.codehaus.plexus.logging.LogEnabled;
 import org.codehaus.plexus.logging.Logger;
 import org.codehaus.plexus.personality.plexus.lifecycle.phase.Initializable;
@@ -43,24 +42,11 @@ import org.unidal.lookup.annotation.Named;
 import org.unidal.tuple.Pair;
 import org.xml.sax.SAXException;
 
-import com.dianping.cat.Cat;
-import com.dianping.cat.Constants;
-import com.dianping.cat.config.content.ContentFetcher;
-import com.dianping.cat.configuration.NetworkInterfaceManager;
-import com.dianping.cat.configuration.server.entity.Domain;
-import com.dianping.cat.configuration.server.entity.HarfsConfig;
-import com.dianping.cat.configuration.server.entity.HdfsConfig;
-import com.dianping.cat.configuration.server.entity.LongConfig;
-import com.dianping.cat.configuration.server.entity.Property;
-import com.dianping.cat.configuration.server.entity.Server;
-import com.dianping.cat.configuration.server.entity.ServerConfig;
-import com.dianping.cat.configuration.server.entity.StorageConfig;
-import com.dianping.cat.configuration.server.transform.DefaultSaxParser;
-import com.dianping.cat.core.config.Config;
-import com.dianping.cat.core.config.ConfigDao;
-import com.dianping.cat.core.config.ConfigEntity;
-import com.dianping.cat.task.TimerSyncTask;
-import com.dianping.cat.task.TimerSyncTask.SyncHandler;
+import java.io.File;
+import java.io.IOException;
+import java.util.*;
+import java.util.concurrent.ExecutorService;
+import java.util.regex.Pattern;
 
 @Named
 public class ServerConfigManager implements LogEnabled, Initializable {
@@ -123,14 +109,14 @@ public class ServerConfigManager implements LogEnabled, Initializable {
 	public List<Pair<String, Integer>> getConsoleEndpoints() {
 		String remoteServers = getProperty(REMOTE_SERVERS, "");
 		List<String> endpoints = Splitters.by(',').noEmptyItem().trim().split(remoteServers);
-		List<Pair<String, Integer>> pairs = new ArrayList<Pair<String, Integer>>(endpoints.size());
+		List<Pair<String, Integer>> pairs = new ArrayList<>(endpoints.size());
 
 		for (String endpoint : endpoints) {
 			int pos = endpoint.indexOf(':');
 			String host = (pos > 0 ? endpoint.substring(0, pos) : endpoint);
 			int port = (pos > 0 ? Integer.parseInt(endpoint.substring(pos + 1)) : 2281);
 
-			pairs.add(new Pair<String, Integer>(host, port));
+			pairs.add(new Pair<>(host, port));
 		}
 
 		return pairs;

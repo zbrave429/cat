@@ -18,6 +18,12 @@
  */
 package com.dianping.cat.servlet;
 
+import com.dianping.cat.Cat;
+import org.unidal.initialization.DefaultModuleContext;
+import org.unidal.initialization.ModuleContext;
+import org.unidal.initialization.ModuleInitializer;
+import org.unidal.web.AbstractContainerServlet;
+
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -25,13 +31,6 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
-
-import org.unidal.initialization.DefaultModuleContext;
-import org.unidal.initialization.ModuleContext;
-import org.unidal.initialization.ModuleInitializer;
-import org.unidal.web.AbstractContainerServlet;
-
-import com.dianping.cat.Cat;
 
 public class CatServlet extends AbstractContainerServlet {
 	private static final long serialVersionUID = 1L;
@@ -65,7 +64,6 @@ public class CatServlet extends AbstractContainerServlet {
 			initializer.execute(ctx);
 		} catch (Exception e) {
 			m_exception = e;
-			System.err.println(e);
 			throw new ServletException(e);
 		}
 	}

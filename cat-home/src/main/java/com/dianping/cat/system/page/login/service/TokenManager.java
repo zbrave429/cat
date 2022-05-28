@@ -22,7 +22,7 @@ import org.unidal.lookup.annotation.Inject;
 
 import com.dianping.cat.system.page.login.spi.ITokenManager;
 
-public class TokenManager implements ITokenManager<SigninContext, Token> {
+public class TokenManager implements ITokenManager<SignInContext, Token> {
 	@Inject
 	private CookieManager m_cookieManager;
 
@@ -30,7 +30,7 @@ public class TokenManager implements ITokenManager<SigninContext, Token> {
 	private TokenBuilder m_tokenBuilder;
 
 	@Override
-	public Token getToken(SigninContext ctx, String name) {
+	public Token getToken(SignInContext ctx, String name) {
 		String value = m_cookieManager.getCookie(ctx, name);
 
 		if (value != null) {
@@ -41,12 +41,12 @@ public class TokenManager implements ITokenManager<SigninContext, Token> {
 	}
 
 	@Override
-	public void removeToken(SigninContext ctx, String name) {
+	public void removeToken(SignInContext ctx, String name) {
 		m_cookieManager.removeCookie(ctx, name);
 	}
 
 	@Override
-	public void setToken(SigninContext ctx, Token token) {
+	public void setToken(SignInContext ctx, Token token) {
 		String name = token.getName();
 		String value = m_tokenBuilder.build(ctx, token);
 

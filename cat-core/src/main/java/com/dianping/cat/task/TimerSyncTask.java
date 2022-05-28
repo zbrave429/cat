@@ -109,9 +109,9 @@ public class TimerSyncTask implements Task {
 
 	public interface SyncHandler {
 
-		public String getName();
+		String getName();
 
-		public void handle() throws Exception;
+		void handle() throws Exception;
 
 	}
 

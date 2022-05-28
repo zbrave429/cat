@@ -24,13 +24,13 @@ import java.util.regex.Pattern;
 
 import com.dianping.cat.system.page.login.spi.ITokenBuilder;
 
-public class TokenBuilder implements ITokenBuilder<SigninContext, Token> {
+public class TokenBuilder implements ITokenBuilder<SignInContext, Token> {
 	private static final String SP = "|";
 
 	private static final long ONE_DAY = 24 * 60 * 60 * 1000L;
 
 	@Override
-	public String build(SigninContext ctx, Token token) {
+	public String build(SignInContext ctx, Token token) {
 		StringBuilder sb = new StringBuilder(256);
 		String userName = token.getUserName();
 		String userNameValue = "";
@@ -60,7 +60,7 @@ public class TokenBuilder implements ITokenBuilder<SigninContext, Token> {
 	}
 
 	@Override
-	public Token parse(SigninContext ctx, String value) {
+	public Token parse(SignInContext ctx, String value) {
 		String[] parts = value.split(Pattern.quote(SP));
 
 		if (parts.length == 5) {

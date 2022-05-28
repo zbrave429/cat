@@ -18,15 +18,6 @@
  */
 package com.dianping.cat.system.page.permission;
 
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-
-import org.codehaus.plexus.personality.plexus.lifecycle.phase.Initializable;
-import org.codehaus.plexus.personality.plexus.lifecycle.phase.InitializationException;
-import org.unidal.dal.jdbc.DalNotFoundException;
-import org.unidal.lookup.annotation.Inject;
-import org.unidal.lookup.annotation.Named;
-
 import com.dianping.cat.Cat;
 import com.dianping.cat.config.content.ContentFetcher;
 import com.dianping.cat.core.config.Config;
@@ -37,6 +28,14 @@ import com.dianping.cat.home.resource.entity.ResourceConfig;
 import com.dianping.cat.home.resource.transform.DefaultSaxParser;
 import com.dianping.cat.task.TimerSyncTask;
 import com.dianping.cat.task.TimerSyncTask.SyncHandler;
+import org.codehaus.plexus.personality.plexus.lifecycle.phase.Initializable;
+import org.codehaus.plexus.personality.plexus.lifecycle.phase.InitializationException;
+import org.unidal.dal.jdbc.DalNotFoundException;
+import org.unidal.lookup.annotation.Inject;
+import org.unidal.lookup.annotation.Named;
+
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Named
 public class ResourceConfigManager implements Initializable {
@@ -59,7 +58,7 @@ public class ResourceConfigManager implements Initializable {
 
 	private ResourceConfig m_config;
 
-	private volatile Map<String, Map<String, Integer>> m_permissions = new ConcurrentHashMap<String, Map<String, Integer>>();
+	private volatile Map<String, Map<String, Integer>> m_permissions = new ConcurrentHashMap<>();
 
 	public ResourceConfig getConfig() {
 		return m_config;
@@ -105,6 +104,7 @@ public class ResourceConfigManager implements Initializable {
 				config.setContent(content);
 				m_configDao.insert(config);
 				m_configId = config.getId();
+				m_modifyTime = config.getCreationDate().getTime();
 				m_config = DefaultSaxParser.parse(content);
 			} catch (Exception ex) {
 				Cat.logError(ex);
@@ -150,8 +150,7 @@ public class ResourceConfigManager implements Initializable {
 		synchronized (this) {
 			if (modifyTime > m_modifyTime) {
 				String content = config.getContent();
-				ResourceConfig resourceConfig = DefaultSaxParser.parse(content);
-				m_config = resourceConfig;
+				m_config = DefaultSaxParser.parse(content);
 				m_modifyTime = modifyTime;
 
 				refreshData();
@@ -160,14 +159,14 @@ public class ResourceConfigManager implements Initializable {
 	}
 
 	private void refreshData() {
-		Map<String, Map<String, Integer>> permissions = new ConcurrentHashMap<String, Map<String, Integer>>();
+		Map<String, Map<String, Integer>> permissions = new ConcurrentHashMap<>();
 
 		for (Resource resource : m_config.getResources()) {
 			String path = resource.getPath();
 			Map<String, Integer> pathPermission = permissions.get(path);
 
 			if (pathPermission == null) {
-				pathPermission = new ConcurrentHashMap<String, Integer>();
+				pathPermission = new ConcurrentHashMap<>();
 				permissions.put(path, pathPermission);
 			}
 

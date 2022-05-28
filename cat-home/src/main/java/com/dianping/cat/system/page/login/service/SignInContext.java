@@ -18,40 +18,26 @@
  */
 package com.dianping.cat.system.page.login.service;
 
-import javax.servlet.http.Cookie;
+import com.dianping.cat.system.page.login.spi.IContext;
 
-public class CookieManager {
-	protected Cookie createCookie(String name, String value) {
-		Cookie cookie = new Cookie(name, value);
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
-		cookie.setPath("/");
-		return cookie;
+public class SignInContext implements IContext {
+	private final HttpServletRequest m_request;
+
+	private final HttpServletResponse m_response;
+
+	public SignInContext(HttpServletRequest request, HttpServletResponse response) {
+		m_request = request;
+		m_response = response;
 	}
 
-	public String getCookie(SignInContext ctx, String name) {
-		Cookie[] cookies = ctx.getRequest().getCookies();
-
-		if (cookies != null) {
-			for (Cookie cookie : cookies) {
-				if (cookie.getName().equals(name)) {
-					return cookie.getValue();
-				}
-			}
-		}
-
-		return null;
+	public HttpServletRequest getRequest() {
+		return m_request;
 	}
 
-	public void removeCookie(SignInContext ctx, String name) {
-		Cookie cookie = createCookie(name, null);
-
-		cookie.setMaxAge(0);
-		ctx.getResponse().addCookie(cookie);
-	}
-
-	public void setCookie(SignInContext ctx, String name, String value) {
-		Cookie cookie = createCookie(name, value);
-
-		ctx.getResponse().addCookie(cookie);
+	public HttpServletResponse getResponse() {
+		return m_response;
 	}
 }
