@@ -18,23 +18,22 @@
  */
 package com.dianping.cat.analysis;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import com.dianping.cat.Cat;
+import com.dianping.cat.statistic.ServerStatisticManager;
 import org.codehaus.plexus.logging.Logger;
 import org.unidal.helper.Threads;
 import org.unidal.helper.Threads.Task;
 import org.unidal.lookup.annotation.Inject;
 
-import com.dianping.cat.Cat;
-import com.dianping.cat.statistic.ServerStatisticManager;
+import java.util.ArrayList;
+import java.util.List;
 
 public class PeriodManager implements Task {
 	public static long EXTRATIME = 3 * 60 * 1000L;
 
 	private PeriodStrategy m_strategy;
 
-	private List<Period> m_periods = new ArrayList<Period>();
+	private List<Period> m_periods = new ArrayList<>();
 
 	private boolean m_active;
 

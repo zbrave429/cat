@@ -18,22 +18,6 @@
  */
 package com.dianping.cat.report.page.business.graph;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
-
-import org.unidal.lookup.annotation.Inject;
-import org.unidal.lookup.util.StringUtils;
-import org.unidal.tuple.Pair;
-
 import com.dianping.cat.Cat;
 import com.dianping.cat.alarm.spi.AlertEntity;
 import com.dianping.cat.config.business.BusinessConfigManager;
@@ -54,6 +38,12 @@ import com.dianping.cat.report.page.business.service.CachedBusinessReportService
 import com.dianping.cat.report.page.business.task.BusinessKeyHelper;
 import com.dianping.cat.service.ProjectService;
 import com.dianping.cat.system.page.business.config.BusinessTagConfigManager;
+import org.unidal.lookup.annotation.Inject;
+import org.unidal.lookup.util.StringUtils;
+import org.unidal.tuple.Pair;
+
+import java.util.*;
+import java.util.Map.Entry;
 
 public class BusinessGraphCreator extends AbstractGraphCreator {
 
@@ -349,7 +339,7 @@ public class BusinessGraphCreator extends AbstractGraphCreator {
 							BusinessReportConfig config) {
 		long start = startDate.getTime(), end = endDate.getTime();
 		int totalSize = (int) ((end - start) / TimeHelper.ONE_MINUTE);
-		Map<String, double[]> oldCurrentValues = new LinkedHashMap<String, double[]>();
+		Map<String, double[]> oldCurrentValues = new LinkedHashMap<>();
 		int index = 0;
 
 		for (; start < end; start += TimeHelper.ONE_HOUR) {

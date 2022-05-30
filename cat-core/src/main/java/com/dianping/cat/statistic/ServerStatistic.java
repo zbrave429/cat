@@ -24,7 +24,7 @@ import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.atomic.AtomicLong;
 
 public class ServerStatistic {
-	private Map<Long, Statistic> m_statistics = new ConcurrentHashMap<Long, Statistic>(100);
+	private final Map<Long, Statistic> m_statistics = new ConcurrentHashMap<>(100);
 
 	public synchronized Statistic findOrCreate(Long time) {
 		Statistic state = m_statistics.get(time);
@@ -52,11 +52,11 @@ public class ServerStatistic {
 
 		private long m_messageDumpLoss;
 
-		private ConcurrentMap<String, AtomicLong> m_messageTotals = new ConcurrentHashMap<String, AtomicLong>(256);
+		private ConcurrentMap<String, AtomicLong> m_messageTotals = new ConcurrentHashMap<>(256);
 
-		private ConcurrentMap<String, AtomicLong> m_messageTotalLosses = new ConcurrentHashMap<String, AtomicLong>(256);
+		private ConcurrentMap<String, AtomicLong> m_messageTotalLosses = new ConcurrentHashMap<>(256);
 
-		private ConcurrentMap<String, AtomicLong> m_messageSizes = new ConcurrentHashMap<String, AtomicLong>(256);
+		private ConcurrentMap<String, AtomicLong> m_messageSizes = new ConcurrentHashMap<>(256);
 
 		private double m_processDelaySum;
 

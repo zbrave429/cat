@@ -73,7 +73,7 @@ public class CatHomeModule extends AbstractModule {
 
         messageReceiver.init();
 
-        Runtime.getRuntime().addShutdownHook(new Thread(messageReceiver::destory));
+        Runtime.getRuntime().addShutdownHook(new Thread(messageReceiver::destroy));
     }
 
 }

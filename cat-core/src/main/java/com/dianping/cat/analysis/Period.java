@@ -59,7 +59,7 @@ public class Period {
 
 		List<String> names = m_analyzerManager.getAnalyzerNames();
 
-		m_tasks = new HashMap<String, List<PeriodTask>>();
+		m_tasks = new HashMap<>();
 		for (String name : names) {
 			List<MessageAnalyzer> messageAnalyzers = m_analyzerManager.getAnalyzer(name, startTime);
 

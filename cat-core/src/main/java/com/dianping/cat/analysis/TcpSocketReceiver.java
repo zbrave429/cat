@@ -64,7 +64,7 @@ public final class TcpSocketReceiver implements LogEnabled {
 
 	private final int m_port = 2280; // default port number from phone, C:2, A:2, T:8
 
-	public synchronized void destory() {
+	public synchronized void destroy() {
 		try {
 			m_logger.info("start shutdown socket, port " + m_port);
 			m_future.channel().closeFuture();
@@ -110,7 +110,7 @@ public final class TcpSocketReceiver implements LogEnabled {
 
 		bootstrap.childHandler(new ChannelInitializer<SocketChannel>() {
 			@Override
-			protected void initChannel(SocketChannel ch) throws Exception {
+			protected void initChannel(SocketChannel ch) {
 				ChannelPipeline pipeline = ch.pipeline();
 
 				pipeline.addLast("decode", new MessageDecoder());
@@ -154,7 +154,7 @@ public final class TcpSocketReceiver implements LogEnabled {
 
 					DefaultMessageTree tree = (DefaultMessageTree) CodecHandler.decode(readBytes);
 
-					// readBytes.retain();
+//					 readBytes.retain();
 					readBytes.resetReaderIndex();
 					tree.setBuffer(readBytes);
 					m_handler.handle(tree);

@@ -18,22 +18,21 @@
  */
 package com.dianping.cat.report.page.home;
 
-import javax.servlet.ServletException;
-import java.io.IOException;
-import java.lang.management.ManagementFactory;
-import java.lang.management.ThreadInfo;
-import java.lang.management.ThreadMXBean;
-import java.util.TreeMap;
-
+import com.dianping.cat.analysis.MessageConsumer;
+import com.dianping.cat.analysis.TcpSocketReceiver;
+import com.dianping.cat.report.ReportPage;
 import org.unidal.lookup.annotation.Inject;
 import org.unidal.web.mvc.PageHandler;
 import org.unidal.web.mvc.annotation.InboundActionMeta;
 import org.unidal.web.mvc.annotation.OutboundActionMeta;
 import org.unidal.web.mvc.annotation.PayloadMeta;
 
-import com.dianping.cat.analysis.MessageConsumer;
-import com.dianping.cat.analysis.TcpSocketReceiver;
-import com.dianping.cat.report.ReportPage;
+import javax.servlet.ServletException;
+import java.io.IOException;
+import java.lang.management.ManagementFactory;
+import java.lang.management.ThreadInfo;
+import java.lang.management.ThreadMXBean;
+import java.util.TreeMap;
 
 public class Handler implements PageHandler<Context> {
 	@Inject
@@ -64,7 +63,7 @@ public class Handler implements PageHandler<Context> {
 		case VIEW:
 			break;
 		case CHECKPOINT:
-			m_receiver.destory();
+			m_receiver.destroy();
 			m_realtimeConsumer.doCheckpoint();
 			break;
 		default:

@@ -18,13 +18,8 @@
  */
 package com.dianping.cat.analysis;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
+import com.dianping.cat.Cat;
+import com.dianping.cat.config.server.ServerConfigManager;
 import org.codehaus.plexus.logging.LogEnabled;
 import org.codehaus.plexus.logging.Logger;
 import org.codehaus.plexus.personality.plexus.lifecycle.phase.Initializable;
@@ -32,137 +27,129 @@ import org.codehaus.plexus.personality.plexus.lifecycle.phase.InitializationExce
 import org.unidal.lookup.ContainerHolder;
 import org.unidal.lookup.annotation.Named;
 
-import com.dianping.cat.Cat;
-import com.dianping.cat.config.server.ServerConfigManager;
+import java.util.*;
 
 @Named(type = MessageAnalyzerManager.class)
 public class DefaultMessageAnalyzerManager extends ContainerHolder
-						implements MessageAnalyzerManager, Initializable,	LogEnabled {
-	private static final long MINUTE = 60 * 1000L;
+        implements MessageAnalyzerManager, Initializable, LogEnabled {
 
-	protected Logger m_logger;
+    private static final long MINUTE = 60 * 1000L;
 
-	private long m_duration = 60 * MINUTE;
+    protected Logger m_logger;
 
-	private long m_extraTime = 3 * MINUTE;
+    private long m_duration = 60 * MINUTE;
 
-	private List<String> m_analyzerNames;
+    private long m_extraTime = 3 * MINUTE;
 
-	private final Map<Long, Map<String, List<MessageAnalyzer>>> m_analyzers = new HashMap<Long, Map<String, List<MessageAnalyzer>>>();
+    private List<String> m_analyzerNames;
 
-	@Override
-	public List<MessageAnalyzer> getAnalyzer(String name, long startTime) {
-		// remove last two hour analyzer
-		try {
-			Map<String, List<MessageAnalyzer>> temp = m_analyzers.remove(startTime - m_duration * 2);
+    private final Map<Long, Map<String, List<MessageAnalyzer>>> m_analyzers = new HashMap<>();
 
-			if (temp != null) {
-				for (List<MessageAnalyzer> analyzers : temp.values()) {
-					for (MessageAnalyzer analyzer : analyzers) {
-						analyzer.destroy();
-					}
-				}
-			}
-		} catch (Exception e) {
-			Cat.logError(e);
-		}
+    @Override
+    public List<MessageAnalyzer> getAnalyzer(String name, long startTime) {
+        // remove last two hour analyzer
+        try {
+            Map<String, List<MessageAnalyzer>> temp = m_analyzers.remove(startTime - m_duration * 2);
 
-		Map<String, List<MessageAnalyzer>> map = m_analyzers.get(startTime);
+            if (temp != null) {
+                for (List<MessageAnalyzer> analyzers : temp.values()) {
+                    for (MessageAnalyzer analyzer : analyzers) {
+                        analyzer.destroy();
+                    }
+                }
+            }
+        } catch (Exception e) {
+            Cat.logError(e);
+        }
 
-		if (map == null) {
-			synchronized (m_analyzers) {
-				map = m_analyzers.get(startTime);
+        Map<String, List<MessageAnalyzer>> map = m_analyzers.get(startTime);
 
-				if (map == null) {
-					map = new HashMap<String, List<MessageAnalyzer>>();
-					m_analyzers.put(startTime, map);
-				}
-			}
-		}
+        if (map == null) {
+            synchronized (m_analyzers) {
+                map = m_analyzers.computeIfAbsent(startTime, k -> new HashMap<>());
+            }
+        }
 
-		List<MessageAnalyzer> analyzers = map.get(name);
+        List<MessageAnalyzer> analyzers = map.get(name);
 
-		if (analyzers == null) {
-			synchronized (map) {
-				analyzers = map.get(name);
+        if (analyzers == null) {
+            synchronized (map) {
+                analyzers = map.get(name);
 
-				if (analyzers == null) {
-					analyzers = new ArrayList<MessageAnalyzer>();
+                if (analyzers == null) {
+                    analyzers = new ArrayList<>();
 
-					MessageAnalyzer analyzer = lookup(MessageAnalyzer.class, name);
+                    MessageAnalyzer analyzer = lookup(MessageAnalyzer.class, name);
 
-					analyzer.setIndex(0);
-					analyzer.initialize(startTime, m_duration, m_extraTime);
-					analyzers.add(analyzer);
+                    analyzer.setIndex(0);
+                    analyzer.initialize(startTime, m_duration, m_extraTime);
+                    analyzers.add(analyzer);
 
-					int count = analyzer.getAnanlyzerCount(name);
+                    int count = analyzer.getAnanlyzerCount(name);
 
-					for (int i = 1; i < count; i++) {
-						MessageAnalyzer tempAnalyzer = lookup(MessageAnalyzer.class, name);
+                    for (int i = 1; i < count; i++) {
+                        MessageAnalyzer tempAnalyzer = lookup(MessageAnalyzer.class, name);
 
-						tempAnalyzer.setIndex(i);
-						tempAnalyzer.initialize(startTime, m_duration, m_extraTime);
-						analyzers.add(tempAnalyzer);
-					}
-					map.put(name, analyzers);
-				}
-			}
-		}
+                        tempAnalyzer.setIndex(i);
+                        tempAnalyzer.initialize(startTime, m_duration, m_extraTime);
+                        analyzers.add(tempAnalyzer);
+                    }
+                    map.put(name, analyzers);
+                }
+            }
+        }
 
-		return analyzers;
-	}
+        return analyzers;
+    }
 
-	@Override
-	public List<String> getAnalyzerNames() {
-		return m_analyzerNames;
-	}
+    @Override
+    public List<String> getAnalyzerNames() {
+        return m_analyzerNames;
+    }
 
-	@Override
-	public void initialize() throws InitializationException {
-		Map<String, MessageAnalyzer> map = lookupMap(MessageAnalyzer.class);
+    @Override
+    public void initialize() throws InitializationException {
+        Map<String, MessageAnalyzer> map = lookupMap(MessageAnalyzer.class);
 
-		for (MessageAnalyzer analyzer : map.values()) {
-			analyzer.destroy();
-		}
+        for (MessageAnalyzer analyzer : map.values()) {
+            analyzer.destroy();
+        }
 
-		m_analyzerNames = new ArrayList<String>(map.keySet());
+        m_analyzerNames = new ArrayList<>(map.keySet());
 
-		Collections.sort(m_analyzerNames, new Comparator<String>() {
-			@Override
-			public int compare(String str1, String str2) {
-				String state = "state";
-				String top = "top";
+        m_analyzerNames.sort((str1, str2) -> {
+            String state = "state";
+            String top = "top";
 
-				if (state.equals(str1)) {
-					return 1;
-				} else if (state.equals(str2)) {
-					return -1;
-				}
-				if (top.equals(str1)) {
-					return -1;
-				} else if (top.equals(str2)) {
-					return 1;
-				}
-				return str1.compareTo(str2);
-			}
-		});
+            if (state.equals(str1)) {
+                return 1;
+            } else if (state.equals(str2)) {
+                return -1;
+            }
+            if (top.equals(str1)) {
+                return -1;
+            } else if (top.equals(str2)) {
+                return 1;
+            }
+            return str1.compareTo(str2);
+        });
 
-		ServerConfigManager manager = lookup(ServerConfigManager.class);
-		List<String> disables = new ArrayList<String>();
+        ServerConfigManager manager = lookup(ServerConfigManager.class);
+        List<String> disables = new ArrayList<>();
 
-		for (String name : m_analyzerNames) {
+        for (String name : m_analyzerNames) {
 
-			if (!manager.getEnableOfRealtimeAnalyzer(name)) {
-				disables.add(name);
-			}
-		}
-		for (String name : disables) {
-			m_analyzerNames.remove(name);
-		}
-	}
+            if (!manager.getEnableOfRealtimeAnalyzer(name)) {
+                disables.add(name);
+            }
+        }
+        for (String name : disables) {
+            m_analyzerNames.remove(name);
+        }
+    }
 
-	@Override
-	public void enableLogging(Logger logger) {
-		m_logger = logger;
-	}
+    @Override
+    public void enableLogging(Logger logger) {
+        m_logger = logger;
+    }
 }
