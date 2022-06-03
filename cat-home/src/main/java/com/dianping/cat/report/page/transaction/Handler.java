@@ -189,7 +189,7 @@ public class Handler implements PageHandler<Context> {
 		ModelRequest request = new ModelRequest(domain, payload.getDate()).setProperty("type", payload.getType())
 								.setProperty("ip", ipAddress);
 
-		if (m_service.isEligable(request)) {
+		if (m_service.isEligible(request)) {
 			ModelResponse<TransactionReport> response = m_service.invoke(request);
 			TransactionReport report = response.getModel();
 

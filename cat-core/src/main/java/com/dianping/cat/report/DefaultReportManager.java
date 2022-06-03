@@ -18,22 +18,6 @@
  */
 package com.dianping.cat.report;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
-
-import org.codehaus.plexus.logging.LogEnabled;
-import org.codehaus.plexus.logging.Logger;
-import org.codehaus.plexus.personality.plexus.lifecycle.phase.Initializable;
-import org.unidal.lookup.ContainerHolder;
-import org.unidal.lookup.annotation.Inject;
-
 import com.dianping.cat.Cat;
 import com.dianping.cat.configuration.NetworkInterfaceManager;
 import com.dianping.cat.core.dal.HourlyReport;
@@ -42,6 +26,14 @@ import com.dianping.cat.core.dal.HourlyReportContentDao;
 import com.dianping.cat.core.dal.HourlyReportDao;
 import com.dianping.cat.message.Message;
 import com.dianping.cat.message.Transaction;
+import org.codehaus.plexus.logging.LogEnabled;
+import org.codehaus.plexus.logging.Logger;
+import org.codehaus.plexus.personality.plexus.lifecycle.phase.Initializable;
+import org.unidal.lookup.ContainerHolder;
+import org.unidal.lookup.annotation.Inject;
+
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 import static com.dianping.cat.Constants.HOUR;
 
@@ -67,7 +59,7 @@ public class DefaultReportManager<T> extends ContainerHolder implements ReportMa
 
 	private String m_name;
 
-	private Map<Long, Map<String, T>> m_reports = new ConcurrentHashMap<Long, Map<String, T>>();
+	private final Map<Long, Map<String, T>> m_reports = new ConcurrentHashMap<Long, Map<String, T>>();
 
 	private Logger m_logger;
 
@@ -120,14 +112,14 @@ public class DefaultReportManager<T> extends ContainerHolder implements ReportMa
 				reports = m_reports.get(startTime);
 
 				if (reports == null) {
-					reports = new ConcurrentHashMap<String, T>();
+					reports = new ConcurrentHashMap<>();
 					m_reports.put(startTime, reports);
 				}
 			}
 		}
 
 		if (reports == null) {
-			reports = new LinkedHashMap<String, T>();
+			reports = new LinkedHashMap<>();
 		}
 
 		T report = reports.get(domain);

@@ -60,7 +60,7 @@ public class DefaultRemoteServersUpdater implements ServersUpdater {
 		if (period == ModelPeriod.CURRENT || period == ModelPeriod.LAST) {
 			ModelRequest request = new ModelRequest(domain, time);
 
-			if (m_service.isEligable(request)) {
+			if (m_service.isEligible(request)) {
 				ModelResponse<StateReport> response = m_service.invoke(request);
 				StateReport report = response.getModel();
 

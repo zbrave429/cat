@@ -176,7 +176,7 @@ public class Handler implements PageHandler<Context> {
 								.setProperty("type", payload.getType())//
 								.setProperty("ip", ipAddress);
 
-		if (m_service.isEligable(request)) {
+		if (m_service.isEligible(request)) {
 			ModelResponse<EventReport> response = m_service.invoke(request);
 			EventReport report = response.getModel();
 

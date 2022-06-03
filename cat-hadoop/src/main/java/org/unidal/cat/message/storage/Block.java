@@ -18,32 +18,31 @@
  */
 package org.unidal.cat.message.storage;
 
+import com.dianping.cat.message.internal.MessageId;
+import io.netty.buffer.ByteBuf;
+
 import java.io.IOException;
 import java.util.Map;
 
-import io.netty.buffer.ByteBuf;
-
-import com.dianping.cat.message.internal.MessageId;
-
 public interface Block {
-	public void clear();
+    public void clear();
 
-	public ByteBuf find(MessageId id);
+    public ByteBuf find(MessageId id);
 
-	public void finish();
+    void finish();
 
-	public ByteBuf getData() throws IOException;
+    public ByteBuf getData() throws IOException;
 
-	public String getDomain();
+    public String getDomain();
 
-	public int getHour();
+    int getHour();
 
-	public Map<MessageId, Integer> getOffsets();
+    public Map<MessageId, Integer> getOffsets();
 
-	public boolean isFull();
+    public boolean isFull();
 
-	public void pack(MessageId id, ByteBuf buf) throws IOException;
+    public void pack(MessageId id, ByteBuf buf) throws IOException;
 
-	public ByteBuf unpack(MessageId id) throws IOException;
+    public ByteBuf unpack(MessageId id) throws IOException;
 
 }

@@ -18,12 +18,6 @@
  */
 package org.unidal.cat.message.storage.internals;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.concurrent.TimeUnit;
-
 import org.codehaus.plexus.logging.LogEnabled;
 import org.codehaus.plexus.logging.Logger;
 import org.codehaus.plexus.personality.plexus.lifecycle.phase.Initializable;
@@ -33,11 +27,17 @@ import org.unidal.cat.message.storage.MessageDumperManager;
 import org.unidal.lookup.ContainerHolder;
 import org.unidal.lookup.annotation.Named;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
+
 @Named(type = MessageDumperManager.class)
 public class DefaultMessageDumperManager extends ContainerHolder
 						implements LogEnabled, MessageDumperManager,	Initializable {
 
-	private Map<Integer, MessageDumper> m_dumpers = new LinkedHashMap<Integer, MessageDumper>();
+	private final Map<Integer, MessageDumper> m_dumpers = new LinkedHashMap<>();
 
 	private Logger m_logger;
 

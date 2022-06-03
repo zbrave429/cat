@@ -215,7 +215,7 @@ public class StateAnalyzer extends AbstractMessageAnalyzer<StateReport> implemen
 	}
 
 	@Override
-	public boolean isEligable(MessageTree tree) {
+	public boolean isEligible(MessageTree tree) {
 		List<Heartbeat> heartbeats = tree.getHeartbeats();
 
 		return heartbeats.size() > 0;

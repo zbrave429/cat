@@ -21,5 +21,10 @@ package com.dianping.cat.analysis;
 import com.dianping.cat.message.spi.MessageTree;
 
 public interface MessageHandler {
+
+    /**
+     * 服务端消息处理
+     * @param message 消息内容
+     */
     void handle(MessageTree message);
 }

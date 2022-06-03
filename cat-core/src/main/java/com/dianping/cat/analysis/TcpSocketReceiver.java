@@ -45,136 +45,138 @@ import java.util.List;
 @Named(type = TcpSocketReceiver.class)
 public final class TcpSocketReceiver implements LogEnabled {
 
-	@Inject
-	protected ServerConfigManager m_serverConfigManager;
+    @Inject
+    protected ServerConfigManager m_serverConfigManager;
 
-	@Inject
-	private MessageHandler m_handler;
+    @Inject
+    private MessageHandler m_handler;
 
-	@Inject
-	private ServerStatisticManager m_serverStateManager;
+    @Inject
+    private ServerStatisticManager m_serverStateManager;
 
-	private ChannelFuture m_future;
+    private ChannelFuture m_future;
 
-	private EventLoopGroup m_bossGroup;
+    private EventLoopGroup m_bossGroup;
 
-	private EventLoopGroup m_workerGroup;
+    private EventLoopGroup m_workerGroup;
 
-	private Logger m_logger;
+    private Logger m_logger;
 
-	private final int m_port = 2280; // default port number from phone, C:2, A:2, T:8
+    private final int m_port = 2280; // default port number from phone, C:2, A:2, T:8
 
-	public synchronized void destroy() {
-		try {
-			m_logger.info("start shutdown socket, port " + m_port);
-			m_future.channel().closeFuture();
-			m_bossGroup.shutdownGracefully();
-			m_workerGroup.shutdownGracefully();
-			m_logger.info("shutdown socket success");
-		} catch (Exception e) {
-			m_logger.warn(e.getMessage(), e);
-		}
-	}
+    public synchronized void destroy() {
+        try {
+            m_logger.info("start shutdown socket, port " + m_port);
+            m_future.channel().closeFuture();
+            m_bossGroup.shutdownGracefully();
+            m_workerGroup.shutdownGracefully();
+            m_logger.info("shutdown socket success");
+        } catch (Exception e) {
+            m_logger.warn(e.getMessage(), e);
+        }
+    }
 
-	@Override
-	public void enableLogging(Logger logger) {
-		m_logger = logger;
-	}
+    @Override
+    public void enableLogging(Logger logger) {
+        m_logger = logger;
+    }
 
-	protected boolean getOSMatches(String osNamePrefix) {
-		String os = System.getProperty("os.name");
+    protected boolean getOSMatches(String osNamePrefix) {
+        String os = System.getProperty("os.name");
 
-		if (os == null) {
-			return false;
-		}
-		return os.startsWith(osNamePrefix);
-	}
+        if (os == null) {
+            return false;
+        }
+        return os.startsWith(osNamePrefix);
+    }
 
-	public void init() {
-		try {
-			startServer(m_port);
-		} catch (Exception e) {
-			m_logger.error(e.getMessage(), e);
-		}
-	}
+    public void init() {
+        try {
+            startServer(m_port);
+        } catch (Exception e) {
+            m_logger.error(e.getMessage(), e);
+        }
+    }
 
-	public synchronized void startServer(int port) throws InterruptedException {
-		boolean linux = getOSMatches("Linux") || getOSMatches("LINUX");
-		int threads = 24;
-		ServerBootstrap bootstrap = new ServerBootstrap();
+    public synchronized void startServer(int port) throws InterruptedException {
+        boolean linux = getOSMatches("Linux") || getOSMatches("LINUX");
+        int threads = 24;
+        ServerBootstrap bootstrap = new ServerBootstrap();
 
-		m_bossGroup = linux ? new EpollEventLoopGroup(threads) : new NioEventLoopGroup(threads);
-		m_workerGroup = linux ? new EpollEventLoopGroup(threads) : new NioEventLoopGroup(threads);
-		bootstrap.group(m_bossGroup, m_workerGroup);
-		bootstrap.channel(linux ? EpollServerSocketChannel.class : NioServerSocketChannel.class);
+        m_bossGroup = linux ? new EpollEventLoopGroup(threads) : new NioEventLoopGroup(threads);
+        m_workerGroup = linux ? new EpollEventLoopGroup(threads) : new NioEventLoopGroup(threads);
+        bootstrap.group(m_bossGroup, m_workerGroup);
+        bootstrap.channel(linux ? EpollServerSocketChannel.class : NioServerSocketChannel.class);
 
-		bootstrap.childHandler(new ChannelInitializer<SocketChannel>() {
-			@Override
-			protected void initChannel(SocketChannel ch) {
-				ChannelPipeline pipeline = ch.pipeline();
+        bootstrap.childHandler(new ChannelInitializer<SocketChannel>() {
+            @Override
+            protected void initChannel(SocketChannel ch) {
+                ChannelPipeline pipeline = ch.pipeline();
 
-				pipeline.addLast("decode", new MessageDecoder());
-				pipeline.addLast("encode", new ClientMessageEncoder());
-			}
-		});
+                pipeline.addLast("decode", new MessageDecoder());
+                pipeline.addLast("encode", new ClientMessageEncoder());
+            }
+        });
 
-		bootstrap.childOption(ChannelOption.SO_REUSEADDR, true);
-		bootstrap.childOption(ChannelOption.TCP_NODELAY, true);
-		bootstrap.childOption(ChannelOption.SO_KEEPALIVE, true);
-		bootstrap.childOption(ChannelOption.ALLOCATOR, PooledByteBufAllocator.DEFAULT);
+        bootstrap.childOption(ChannelOption.SO_REUSEADDR, true);
+        bootstrap.childOption(ChannelOption.TCP_NODELAY, true);
+        bootstrap.childOption(ChannelOption.SO_KEEPALIVE, true);
+        bootstrap.childOption(ChannelOption.ALLOCATOR, PooledByteBufAllocator.DEFAULT);
 
-		try {
-			m_future = bootstrap.bind(port).sync();
-			m_logger.info("start netty server!");
-		} catch (Exception e) {
-			m_logger.error("Started Netty Server Failed:" + port, e);
-		}
-	}
+        try {
+            m_future = bootstrap.bind(port).sync();
+            m_logger.info("start netty server!");
+        } catch (Exception e) {
+            m_logger.error("Started Netty Server Failed:" + port, e);
+        }
+    }
 
-	public class MessageDecoder extends ByteToMessageDecoder {
-		private long m_processCount;
+    public class MessageDecoder extends ByteToMessageDecoder {
+        private long m_processCount;
 
-		@Override
-		protected void decode(ChannelHandlerContext ctx, ByteBuf buffer, List<Object> out) throws Exception {
-			if (buffer.readableBytes() < 4) {
-				return;
-			}
-			buffer.markReaderIndex();
-			int length = buffer.readInt();
-			buffer.resetReaderIndex();
-			if (buffer.readableBytes() < length + 4) {
-				return;
-			}
-			try {
-				if (length > 0) {
-					ByteBuf readBytes = buffer.readBytes(length + 4);
+        @Override
+        protected void decode(ChannelHandlerContext ctx, ByteBuf buffer, List<Object> out) throws Exception {
+            if (buffer.readableBytes() < 4) {
+                return;
+            }
+            buffer.markReaderIndex();
+            int length = buffer.readInt();
+            buffer.resetReaderIndex();
+            if (buffer.readableBytes() < length + 4) {
+                // 消息未全部到达，继续等待后续消息内容
+                return;
+            }
+            try {
+                if (length > 0) {
+                    // 读取完整消息数据到readBytes
+                    ByteBuf readBytes = buffer.readBytes(length + 4);
 
-					readBytes.markReaderIndex();
-					//readBytes.readInt();
+                    readBytes.markReaderIndex();
+                    //readBytes.readInt();
 
-					DefaultMessageTree tree = (DefaultMessageTree) CodecHandler.decode(readBytes);
+                    DefaultMessageTree tree = (DefaultMessageTree) CodecHandler.decode(readBytes);
 
 //					 readBytes.retain();
-					readBytes.resetReaderIndex();
-					tree.setBuffer(readBytes);
-					m_handler.handle(tree);
-					m_processCount++;
+                    readBytes.resetReaderIndex();
+                    tree.setBuffer(readBytes);
+                    m_handler.handle(tree);
+                    m_processCount++;
 
-					long flag = m_processCount % CatConstants.SUCCESS_COUNT;
+                    long flag = m_processCount % CatConstants.SUCCESS_COUNT;
 
-					if (flag == 0) {
-						m_serverStateManager.addMessageTotal(CatConstants.SUCCESS_COUNT);
-					}
-				} else {
-					// client message is error
-					buffer.readBytes(length);
-					BufReleaseHelper.release(buffer);
-				}
-			} catch (Exception e) {
-				m_serverStateManager.addMessageTotalLoss(1);
-				m_logger.error(e.getMessage(), e);
-			}
-		}
-	}
+                    if (flag == 0) {
+                        m_serverStateManager.addMessageTotal(CatConstants.SUCCESS_COUNT);
+                    }
+                } else {
+                    // client message is error
+                    buffer.readBytes(length);
+                    BufReleaseHelper.release(buffer);
+                }
+            } catch (Exception e) {
+                m_serverStateManager.addMessageTotalLoss(1);
+                m_logger.error(e.getMessage(), e);
+            }
+        }
+    }
 
 }

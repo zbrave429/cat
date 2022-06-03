@@ -24,7 +24,12 @@ import com.dianping.cat.report.ReportManager;
 
 public interface MessageAnalyzer {
 
-    boolean isEligable(MessageTree tree);
+    /**
+     * 判断消息是否符合条件
+     * @param tree 消息
+     * @return bool
+     */
+    boolean isEligible(MessageTree tree);
 
     void analyze(MessageQueue queue);
 

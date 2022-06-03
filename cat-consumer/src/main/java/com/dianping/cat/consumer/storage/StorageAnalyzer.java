@@ -93,7 +93,7 @@ public class StorageAnalyzer extends AbstractMessageAnalyzer<StorageReport> impl
 	}
 
 	@Override
-	public boolean isEligable(MessageTree tree) {
+	public boolean isEligible(MessageTree tree) {
 		if (tree.getTransactions().size() > 0) {
 			return true;
 		} else {

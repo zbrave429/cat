@@ -58,7 +58,7 @@ public class CachedBusinessReportService {
 		if (period == ModelPeriod.CURRENT || period == ModelPeriod.LAST) {
 			ModelRequest request = new ModelRequest(domain, time);
 
-			if (m_service.isEligable(request)) {
+			if (m_service.isEligible(request)) {
 				ModelResponse<BusinessReport> response = m_service.invoke(request);
 				BusinessReport report = response.getModel();
 

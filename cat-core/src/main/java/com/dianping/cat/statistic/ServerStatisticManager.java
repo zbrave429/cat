@@ -90,6 +90,7 @@ public class ServerStatisticManager {
 	private Statistic getCurrentStatistic() {
 		long time = System.currentTimeMillis();
 
+		// 当前分钟时间戳
 		time = time - time % (60 * 1000);
 
 		if (time != m_currentMinute) {

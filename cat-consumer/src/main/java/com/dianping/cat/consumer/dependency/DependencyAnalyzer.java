@@ -94,12 +94,8 @@ public class DependencyAnalyzer extends AbstractMessageAnalyzer<DependencyReport
 	}
 
 	@Override
-	public boolean isEligable(MessageTree tree) {
-		if (tree.getTransactions().size() > 0) {
-			return true;
-		} else {
-			return false;
-		}
+	public boolean isEligible(MessageTree tree) {
+		return tree.getTransactions().size() > 0;
 	}
 
 	@Override

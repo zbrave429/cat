@@ -18,25 +18,19 @@
  */
 package org.unidal.cat.message.storage.internals;
 
+import com.dianping.cat.Cat;
+import com.dianping.cat.message.internal.MessageId;
+import io.netty.buffer.*;
+import org.unidal.cat.message.storage.Block;
+import org.xerial.snappy.SnappyInputStream;
+import org.xerial.snappy.SnappyOutputStream;
+
 import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.LinkedHashMap;
 import java.util.Map;
-
-import io.netty.buffer.ByteBuf;
-import io.netty.buffer.ByteBufAllocator;
-import io.netty.buffer.ByteBufInputStream;
-import io.netty.buffer.ByteBufOutputStream;
-import io.netty.buffer.Unpooled;
-import io.netty.buffer.UnpooledByteBufAllocator;
-import org.unidal.cat.message.storage.Block;
-import org.xerial.snappy.SnappyInputStream;
-import org.xerial.snappy.SnappyOutputStream;
-
-import com.dianping.cat.Cat;
-import com.dianping.cat.message.internal.MessageId;
 
 public class DefaultBlock implements Block {
 
@@ -50,7 +44,7 @@ public class DefaultBlock implements Block {
 
 	private int m_offset;
 
-	private Map<MessageId, Integer> m_offsets = new LinkedHashMap<MessageId, Integer>();
+	private Map<MessageId, Integer> m_offsets = new LinkedHashMap<>();
 
 	private volatile OutputStream m_out;
 

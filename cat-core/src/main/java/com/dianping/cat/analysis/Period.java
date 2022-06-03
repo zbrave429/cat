@@ -69,21 +69,19 @@ public class Period {
 
 				task.enableLogging(m_logger);
 
-				List<PeriodTask> analyzerTasks = m_tasks.get(name);
+				List<PeriodTask> analyzerTasks = m_tasks.computeIfAbsent(name, k -> new ArrayList<>());
 
-				if (analyzerTasks == null) {
-					analyzerTasks = new ArrayList<PeriodTask>();
-					m_tasks.put(name, analyzerTasks);
-				}
 				analyzerTasks.add(task);
 			}
 		}
 	}
 
 	public void distribute(MessageTree tree) {
-		m_serverStateManager.addMessageTotal(tree.getDomain(), 1);
-		boolean success = true;
+		// appkey消息总数+1
 		String domain = tree.getDomain();
+		m_serverStateManager.addMessageTotal(domain, 1);
+
+		boolean success = true;
 
 		for (Entry<String, List<PeriodTask>> entry : m_tasks.entrySet()) {
 			List<PeriodTask> tasks = entry.getValue();

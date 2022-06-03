@@ -136,7 +136,7 @@ public class AbstractMessageAnalyzerTest extends ComponentTestCase {
 		}
 
 		@Override
-		public boolean isEligable(MessageTree tree) {
+		public boolean isEligible(MessageTree tree) {
 			return true;
 		}
 	}

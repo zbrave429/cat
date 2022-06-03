@@ -110,12 +110,8 @@ public class CrossAnalyzer extends AbstractMessageAnalyzer<CrossReport> implemen
 	}
 
 	@Override
-	public boolean isEligable(MessageTree tree) {
-		if (tree.getTransactions().size() > 0) {
-			return true;
-		} else {
-			return false;
-		}
+	public boolean isEligible(MessageTree tree) {
+		return tree.getTransactions().size() > 0;
 	}
 
 	@Override

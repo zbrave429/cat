@@ -82,7 +82,7 @@ public class FailureSummaryBuilder extends SummaryBuilder {
 		request.setProperty("type", "error");
 		ProblemReport report = null;
 
-		if (m_service.isEligable(request)) {
+		if (m_service.isEligible(request)) {
 			ModelResponse<ProblemReport> response = m_service.invoke(request);
 			report = response.getModel();
 		}

@@ -89,7 +89,7 @@ public class HistoricalMessageService extends BaseHistoricalModelService<String>
 	}
 
 	@Override
-	public boolean isEligable(ModelRequest request) {
+	public boolean isEligible(ModelRequest request) {
 		boolean eligibale = request.getPeriod().isHistorical();
 
 		return eligibale;

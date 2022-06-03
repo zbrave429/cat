@@ -42,14 +42,29 @@ public class ServerStatistic {
 
 	public static class Statistic {
 
+		/**
+		 * 消息总数
+		 */
 		private long m_messageTotal;
 
+		/**
+		 * 丢失消息数
+		 */
 		private long m_messageTotalLoss;
 
+		/**
+		 * 消息体积
+		 */
 		private long m_messageSize;
 
+		/**
+		 * 落磁盘消息量
+		 */
 		private long m_messageDump;
 
+		/**
+		 * 落磁盘消息丢失量
+		 */
 		private long m_messageDumpLoss;
 
 		private ConcurrentMap<String, AtomicLong> m_messageTotals = new ConcurrentHashMap<>(256);

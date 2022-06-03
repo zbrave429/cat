@@ -241,7 +241,7 @@ public class Handler implements PageHandler<Context> {
 		ModelRequest request = new ModelRequest(domain, payload.getDate()) //
 								.setProperty("date", date);
 
-		if (m_topService.isEligable(request)) {
+		if (m_topService.isEligible(request)) {
 			ModelResponse<TopReport> response = m_topService.invoke(request);
 			TopReport report = response.getModel();
 
@@ -288,7 +288,7 @@ public class Handler implements PageHandler<Context> {
 		ModelRequest request = new ModelRequest(domain, date).setProperty("type", type).setProperty("name", Constants.ALL)
 								.setProperty("ip", ipAddress);
 
-		if (m_transactionService.isEligable(request)) {
+		if (m_transactionService.isEligible(request)) {
 			ModelResponse<TransactionReport> response = m_transactionService.invoke(request);
 			TransactionReport report = response.getModel();
 
@@ -305,7 +305,7 @@ public class Handler implements PageHandler<Context> {
 		if (!Constants.ALL.equals(ipAddress)) {
 			request.setProperty("ip", ipAddress);
 		}
-		if (m_problemService.isEligable(request)) {
+		if (m_problemService.isEligible(request)) {
 			ModelResponse<ProblemReport> response = m_problemService.invoke(request);
 			ProblemReport report = response.getModel();
 

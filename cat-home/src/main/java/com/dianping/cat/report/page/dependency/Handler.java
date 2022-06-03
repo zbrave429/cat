@@ -252,7 +252,7 @@ public class Handler implements PageHandler<Context> {
 		String domain = payload.getDomain();
 		ModelRequest request = new ModelRequest(domain, payload.getDate());
 
-		if (m_dependencyService.isEligable(request)) {
+		if (m_dependencyService.isEligible(request)) {
 			ModelResponse<DependencyReport> response = m_dependencyService.invoke(request);
 			DependencyReport report = response.getModel();
 

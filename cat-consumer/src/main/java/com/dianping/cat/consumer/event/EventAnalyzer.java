@@ -213,14 +213,10 @@ public class EventAnalyzer extends AbstractMessageAnalyzer<EventReport> implemen
 	}
 
 	@Override
-	public boolean isEligable(MessageTree tree) {
+	public boolean isEligible(MessageTree tree) {
 		List<Event> events = tree.getEvents();
 
-		if (events != null && events.size() > 0) {
-			return true;
-		} else {
-			return false;
-		}
+		return events != null && events.size() > 0;
 	}
 
 	@Override

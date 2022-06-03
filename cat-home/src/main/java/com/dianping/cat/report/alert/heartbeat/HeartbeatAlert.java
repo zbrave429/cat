@@ -225,7 +225,7 @@ public class HeartbeatAlert implements Task {
 		ModelRequest request = new ModelRequest(domain, date).setProperty("min", String.valueOf(start))
 								.setProperty("max", String.valueOf(end)).setProperty("ip", Constants.ALL).setProperty("requireAll", "true");
 
-		if (m_heartbeatService.isEligable(request)) {
+		if (m_heartbeatService.isEligible(request)) {
 			ModelResponse<HeartbeatReport> response = m_heartbeatService.invoke(request);
 
 			if (response != null) {

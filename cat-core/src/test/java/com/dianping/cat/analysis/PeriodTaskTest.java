@@ -92,7 +92,7 @@ public class PeriodTaskTest extends ComponentTestCase {
 		}
 
 		@Override
-		public boolean isEligable(MessageTree tree) {
+		public boolean isEligible(MessageTree tree) {
 			return true;
 		}
 	}

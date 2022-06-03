@@ -73,12 +73,7 @@ public class DumpAnalyzer extends AbstractMessageAnalyzer<Object> implements Log
 	@Override
 	public synchronized void doCheckpoint(boolean atEnd) {
 		if (atEnd) {
-			Threads.forGroup("cat").start(new Runnable() {
-				@Override
-				public void run() {
-					closeStorage();
-				}
-			});
+			Threads.forGroup("cat").start(this::closeStorage);
 		} else {
 			closeStorage();
 		}

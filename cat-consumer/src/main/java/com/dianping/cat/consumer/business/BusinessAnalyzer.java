@@ -75,7 +75,7 @@ public class BusinessAnalyzer extends AbstractMessageAnalyzer<BusinessReport> im
 	}
 
 	@Override
-	public boolean isEligable(MessageTree tree) {
+	public boolean isEligible(MessageTree tree) {
 		return tree.getMetrics().size() > 0;
 	}
 
@@ -87,14 +87,19 @@ public class BusinessAnalyzer extends AbstractMessageAnalyzer<BusinessReport> im
 	private ConfigItem parseValue(String status, String data) {
 		ConfigItem config = new ConfigItem();
 
+		/**
+		 * c - count
+		 * s - sum
+		 * t - ? TODO
+		 */
 		if ("C".equals(status)) {
 			if (StringUtils.isEmpty(data)) {
 				data = "1";
 			}
-			int count = (int) Double.parseDouble(data);
+			int count = Integer.parseInt(data);
 
 			config.setCount(count);
-			config.setValue((double) count);
+			config.setValue(count);
 			config.setShowCount(true);
 		} else if ("T".equals(status)) {
 			double duration = Double.parseDouble(data);
@@ -109,10 +114,10 @@ public class BusinessAnalyzer extends AbstractMessageAnalyzer<BusinessReport> im
 			config.setValue(sum);
 			config.setShowSum(true);
 		} else if ("S,C".equals(status)) {
-			String[] datas = data.split(",");
+			String[] dataArr = data.split(",");
 
-			config.setCount(Integer.parseInt(datas[0]));
-			config.setValue(Double.parseDouble(datas[1]));
+			config.setCount(Integer.parseInt(dataArr[0]));
+			config.setValue(Double.parseDouble(dataArr[1]));
 			config.setShowSum(true);
 		} else {
 			return null;
@@ -142,6 +147,7 @@ public class BusinessAnalyzer extends AbstractMessageAnalyzer<BusinessReport> im
 			ConfigItem config = parseValue(status, data);
 
 			if (config != null) {
+				config.setTitle(name);
 				long current = metric.getTimestamp() / 1000 / 60;
 				int min = (int) (current % 60);
 				BusinessItem businessItem = report.findOrCreateBusinessItem(name);
@@ -152,8 +158,6 @@ public class BusinessAnalyzer extends AbstractMessageAnalyzer<BusinessReport> im
 				seg.incCount(config.getCount());
 				seg.incSum(config.getValue());
 				seg.setAvg(seg.getSum() / seg.getCount());
-
-				config.setTitle(name);
 
 				boolean result = m_configManager.insertBusinessConfigIfNotExist(domain, name, config);
 

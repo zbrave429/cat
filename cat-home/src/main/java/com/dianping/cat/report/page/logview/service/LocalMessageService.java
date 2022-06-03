@@ -18,16 +18,6 @@
  */
 package com.dianping.cat.report.page.logview.service;
 
-import java.nio.charset.Charset;
-
-import io.netty.buffer.ByteBuf;
-import io.netty.buffer.ByteBufAllocator;
-import org.unidal.cat.message.storage.Bucket;
-import org.unidal.cat.message.storage.BucketManager;
-import org.unidal.cat.message.storage.MessageFinderManager;
-import org.unidal.lookup.annotation.Inject;
-import org.unidal.lookup.annotation.Named;
-
 import com.dianping.cat.Cat;
 import com.dianping.cat.configuration.NetworkInterfaceManager;
 import com.dianping.cat.consumer.dump.DumpAnalyzer;
@@ -41,11 +31,16 @@ import com.dianping.cat.message.internal.MessageId;
 import com.dianping.cat.message.spi.MessageTree;
 import com.dianping.cat.message.storage.MessageBucketManager;
 import com.dianping.cat.mvc.ApiPayload;
-import com.dianping.cat.report.service.LocalModelService;
-import com.dianping.cat.report.service.ModelPeriod;
-import com.dianping.cat.report.service.ModelRequest;
-import com.dianping.cat.report.service.ModelResponse;
-import com.dianping.cat.report.service.ModelService;
+import com.dianping.cat.report.service.*;
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.ByteBufAllocator;
+import org.unidal.cat.message.storage.Bucket;
+import org.unidal.cat.message.storage.BucketManager;
+import org.unidal.cat.message.storage.MessageFinderManager;
+import org.unidal.lookup.annotation.Inject;
+import org.unidal.lookup.annotation.Named;
+
+import java.nio.charset.Charset;
 
 @Named(type = LocalModelService.class, value = "logview")
 public class LocalMessageService extends LocalModelService<String> implements ModelService<String> {
@@ -187,7 +182,7 @@ public class LocalMessageService extends LocalModelService<String> implements Mo
 	}
 
 	@Override
-	public boolean isEligable(ModelRequest request) {
+	public boolean isEligible(ModelRequest request) {
 		if (m_configManager.isHdfsOn()) {
 			return request.getPeriod().isCurrent();
 		} else {

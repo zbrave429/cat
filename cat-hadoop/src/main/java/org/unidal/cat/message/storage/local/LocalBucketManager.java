@@ -18,15 +18,7 @@
  */
 package org.unidal.cat.message.storage.local;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
-
+import com.dianping.cat.Cat;
 import org.codehaus.plexus.logging.LogEnabled;
 import org.codehaus.plexus.logging.Logger;
 import org.unidal.cat.message.storage.Bucket;
@@ -37,7 +29,10 @@ import org.unidal.lookup.ContainerHolder;
 import org.unidal.lookup.annotation.Inject;
 import org.unidal.lookup.annotation.Named;
 
-import com.dianping.cat.Cat;
+import java.io.File;
+import java.io.IOException;
+import java.util.*;
+import java.util.Map.Entry;
 
 @Named(type = BucketManager.class, value = "local")
 public class LocalBucketManager extends ContainerHolder implements BucketManager, LogEnabled {
@@ -105,7 +100,7 @@ public class LocalBucketManager extends ContainerHolder implements BucketManager
 				m = map.get(hour);
 
 				if (m == null) {
-					m = new LinkedHashMap<String, Bucket>();
+					m = new LinkedHashMap<>();
 					map.put(hour, m);
 				}
 			}

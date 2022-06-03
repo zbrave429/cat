@@ -263,7 +263,7 @@ public class TopologyGraphManager implements Initializable, LogEnabled {
 			if (m_serverFilterConfigManager.validateDomain(domain)) {
 				ModelRequest request = new ModelRequest(domain, ModelPeriod.CURRENT.getStartTime());
 
-				if (m_service.isEligable(request)) {
+				if (m_service.isEligible(request)) {
 					ModelResponse<DependencyReport> response = m_service.invoke(request);
 					DependencyReport report = response.getModel();
 

@@ -124,7 +124,7 @@ public class Handler implements PageHandler<Context> {
 		ModelRequest request = new ModelRequest(domain, date) //
 								.setProperty("ip", ipAddress);
 
-		if (m_service.isEligable(request)) {
+		if (m_service.isEligible(request)) {
 			ModelResponse<HeartbeatReport> response = m_service.invoke(request);
 			HeartbeatReport report = response.getModel();
 

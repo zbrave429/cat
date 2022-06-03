@@ -92,7 +92,7 @@ public class ExternalInfoBuilder {
 		String date = String.valueOf(payload.getDate());
 		ModelRequest request = new ModelRequest(domain, payload.getDate()) //
 								.setProperty("date", date).setProperty("type", "view");
-		if (m_problemservice.isEligable(request)) {
+		if (m_problemservice.isEligible(request)) {
 			ModelResponse<ProblemReport> response = m_problemservice.invoke(request);
 
 			return response.getModel();

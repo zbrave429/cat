@@ -68,7 +68,7 @@ public class Handler implements PageHandler<Context> {
 										.setProperty("waterfall", String.valueOf(waterfall)) //
 										.setProperty("timestamp", String.valueOf(timestamp));
 
-				if (m_service.isEligable(request)) {
+				if (m_service.isEligible(request)) {
 					ModelResponse<String> response = m_service.invoke(request);
 					String logview = response.getModel();
 
