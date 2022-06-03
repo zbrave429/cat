@@ -25,86 +25,91 @@ import io.netty.buffer.ByteBuf;
 import java.util.List;
 
 public interface MessageTree extends Cloneable {
-	boolean canDiscard();
+    boolean canDiscard();
 
-	MessageTree copy();
+    MessageTree copy();
 
-	List<Event> findOrCreateEvents();
+    List<Event> findOrCreateEvents();
 
-	List<Heartbeat> findOrCreateHeartbeats();
+    List<Heartbeat> findOrCreateHeartbeats();
 
-	List<Metric> findOrCreateMetrics();
+    List<Metric> findOrCreateMetrics();
 
-	List<Transaction> findOrCreateTransactions();
+    List<Transaction> findOrCreateTransactions();
 
-	ByteBuf getBuffer();
+    ByteBuf getBuffer();
 
-	String getDomain();
+    String getDomain();
 
-	void setDomain(String domain);
+    /**
+     * appkey
+     *
+     * @param domain 业务appkey
+     */
+    void setDomain(String domain);
 
-	List<Event> getEvents();
+    List<Event> getEvents();
 
-	MessageId getFormatMessageId();
+    MessageId getFormatMessageId();
 
-	void setFormatMessageId(MessageId messageId);
+    void setFormatMessageId(MessageId messageId);
 
-	List<Heartbeat> getHeartbeats();
+    List<Heartbeat> getHeartbeats();
 
-	String getHostName();
+    String getHostName();
 
-	void setHostName(String hostName);
+    void setHostName(String hostName);
 
-	String getIpAddress();
+    String getIpAddress();
 
-	void setIpAddress(String ipAddress);
+    void setIpAddress(String ipAddress);
 
-	String getSessionToken();
+    String getSessionToken();
 
-	void setSessionToken(String session);
+    void setSessionToken(String session);
 
-	Message getMessage();
+    Message getMessage();
 
-	void setMessage(Message message);
+    void setMessage(Message message);
 
-	String getMessageId();
+    String getMessageId();
 
-	void setMessageId(String messageId);
+    void setMessageId(String messageId);
 
-	List<Metric> getMetrics();
+    List<Metric> getMetrics();
 
-	String getParentMessageId();
+    String getParentMessageId();
 
-	void setParentMessageId(String parentMessageId);
+    void setParentMessageId(String parentMessageId);
 
-	String getRootMessageId();
+    String getRootMessageId();
 
-	void setRootMessageId(String rootMessageId);
+    void setRootMessageId(String rootMessageId);
 
-	String getThreadGroupName();
+    String getThreadGroupName();
 
-	void setThreadGroupName(String name);
+    void setThreadGroupName(String name);
 
-	String getThreadId();
+    String getThreadId();
 
-	void setThreadId(String threadId);
+    void setThreadId(String threadId);
 
-	String getThreadName();
+    String getThreadName();
 
-	void setThreadName(String id);
+    void setThreadName(String id);
 
-	List<Transaction> getTransactions();
+    List<Transaction> getTransactions();
 
-	boolean isProcessLoss();
+    boolean isProcessLoss();
 
-	void setProcessLoss(boolean loss);
+    void setProcessLoss(boolean loss);
 
-	void setDiscard(boolean discard);
+    void setDiscard(boolean discard);
 
-	boolean isHitSample();
+    boolean isHitSample();
 
-	void setHitSample(boolean hitSample);
+    void setHitSample(boolean hitSample);
 
-	void setDiscardPrivate(boolean discard);
+    void setDiscardPrivate(boolean discard);
 
 }

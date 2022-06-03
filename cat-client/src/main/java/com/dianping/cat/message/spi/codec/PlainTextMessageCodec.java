@@ -18,43 +18,28 @@
  */
 package com.dianping.cat.message.spi.codec;
 
-import java.io.UnsupportedEncodingException;
-import java.nio.charset.Charset;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.Stack;
-import java.util.TimeZone;
-import java.util.concurrent.ArrayBlockingQueue;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.ConcurrentHashMap;
-
-import io.netty.buffer.ByteBuf;
-import io.netty.buffer.UnpooledByteBufAllocator;
-
 import com.dianping.cat.Cat;
-import com.dianping.cat.message.Event;
-import com.dianping.cat.message.Heartbeat;
-import com.dianping.cat.message.Message;
-import com.dianping.cat.message.Metric;
-import com.dianping.cat.message.Trace;
-import com.dianping.cat.message.Transaction;
-import com.dianping.cat.message.internal.DefaultEvent;
-import com.dianping.cat.message.internal.DefaultHeartbeat;
-import com.dianping.cat.message.internal.DefaultMetric;
-import com.dianping.cat.message.internal.DefaultTrace;
-import com.dianping.cat.message.internal.DefaultTransaction;
+import com.dianping.cat.message.*;
+import com.dianping.cat.message.internal.*;
 import com.dianping.cat.message.io.BufReleaseHelper;
 import com.dianping.cat.message.spi.MessageCodec;
 import com.dianping.cat.message.spi.MessageTree;
 import com.dianping.cat.message.spi.internal.DefaultMessageTree;
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.UnpooledByteBufAllocator;
+
+import java.io.UnsupportedEncodingException;
+import java.nio.charset.Charset;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.*;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class PlainTextMessageCodec implements MessageCodec {
-	public static final String ID = "plain-text";
 
-	private static final String VERSION = "PT1"; // plain text version 1
+	private static final byte VERSION = MessageCodecTypeEnum.PT1.getValue(); // plain text version 1
 
 	private static final byte TAB = '\t'; // tab character
 
@@ -121,7 +106,7 @@ public class PlainTextMessageCodec implements MessageCodec {
 
 	protected void decodeHeader(Context ctx, MessageTree tree) {
 		BufferHelper helper = m_bufferHelper;
-		String id = helper.read(ctx, TAB);
+		byte version = helper.readVersion(ctx, TAB);
 		String domain = helper.read(ctx, TAB);
 		String hostName = helper.read(ctx, TAB);
 		String ipAddress = helper.read(ctx, TAB);
@@ -133,7 +118,7 @@ public class PlainTextMessageCodec implements MessageCodec {
 		String rootMessageId = helper.read(ctx, TAB);
 		String sessionToken = helper.read(ctx, LF);
 
-		if (VERSION.equals(id)) {
+		if (VERSION == version) {
 			tree.setDomain(domain);
 			tree.setHostName(hostName);
 			tree.setIpAddress(ipAddress);
@@ -145,7 +130,7 @@ public class PlainTextMessageCodec implements MessageCodec {
 			tree.setRootMessageId(rootMessageId);
 			tree.setSessionToken(sessionToken);
 		} else {
-			throw new RuntimeException(String.format("Unrecognized id(%s) for plain text message codec!", id));
+			throw new RuntimeException(String.format("Unrecognized id(%s) for plain text message codec!", version));
 		}
 	}
 
@@ -540,6 +525,15 @@ public class PlainTextMessageCodec implements MessageCodec {
 					return new String(ba, 0, index);
 				}
 			}
+		}
+
+		public byte readVersion(Context ctx, byte separator) {
+			ByteBuf buf = ctx.getBuffer();
+			byte version = buf.readByte();
+			if (version != separator && separator == buf.readByte()){
+				return version;
+			}
+			throw new RuntimeException("codec type read error!");
 		}
 
 		public int write(ByteBuf buf, byte b) {
