@@ -28,11 +28,23 @@ import org.unidal.lookup.annotation.Inject;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * 1秒钟执行一次
+ */
 public class PeriodManager implements Task {
-	public static long EXTRATIME = 3 * 60 * 1000L;
+	/**
+	 * 额外预留时间 3分钟，通过这个控制周期提前开始和延迟结束
+	 */
+	public static long EXTRA_TIME = 3 * 60 * 1000L;
 
+	/**
+	 * 周期策略，用于控制周期持续时间，周期的开始和结束
+	 */
 	private PeriodStrategy m_strategy;
 
+	/**
+	 * 活跃的有效周期
+	 */
 	private List<Period> m_periods = new ArrayList<>();
 
 	private boolean m_active;
@@ -48,7 +60,7 @@ public class PeriodManager implements Task {
 
 	public PeriodManager(long duration, MessageAnalyzerManager analyzerManager,	ServerStatisticManager serverStateManager,
 							Logger logger) {
-		m_strategy = new PeriodStrategy(duration, EXTRATIME, EXTRATIME);
+		m_strategy = new PeriodStrategy(duration, EXTRA_TIME, EXTRA_TIME);
 		m_active = true;
 		m_analyzerManager = analyzerManager;
 		m_serverStateManager = serverStateManager;
@@ -84,6 +96,9 @@ public class PeriodManager implements Task {
 		return "RealtimeConsumer-PeriodManager";
 	}
 
+	/**
+	 * 初始化第一个周期
+	 */
 	public void init() {
 		long startTime = m_strategy.next(System.currentTimeMillis());
 
@@ -130,6 +145,9 @@ public class PeriodManager implements Task {
 
 	private class EndTaskThread implements Task {
 
+		/**
+		 * 需要结束的周期任务的开始时间
+		 */
 		private long m_startTime;
 
 		public EndTaskThread(long startTime) {

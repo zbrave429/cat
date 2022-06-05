@@ -25,7 +25,7 @@ import java.util.concurrent.ConcurrentHashMap;
 @Named
 public class DomainValidator {
 
-	private ConcurrentHashMap<String, String> m_valids = new ConcurrentHashMap<String, String>();
+	private ConcurrentHashMap<String, String> m_valids = new ConcurrentHashMap<>();
 
 	public boolean validate(String domain) {
 		if (!m_valids.containsKey(domain)) {

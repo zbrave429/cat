@@ -18,13 +18,36 @@
  */
 package com.dianping.cat.analysis;
 
+/**
+ *
+ * 周期开始结束时间点
+ *        start_time         end_time
+ *            |                 |
+ * -----------|-------...-------|----------
+ * 		 ^                 ^     ^-------remove
+ * 	   create     next period create
+ * (提前3分钟创建下个周期)     (延迟3分钟结束上一个周期)
+ *
+ */
 public class PeriodStrategy {
+	/**
+	 * 周期持续时间（1小时）
+	 */
 	private long m_duration;
 
+	/**
+	 * 周期结束延迟时间
+	 */
 	private long m_extraTime;
 
+	/**
+	 * 周期提前开始时间
+	 */
 	private long m_aheadTime;
 
+	/**
+	 * 周期开始时间（小时）
+	 */
 	private long m_lastStartTime;
 
 	private long m_lastEndTime;
@@ -50,13 +73,13 @@ public class PeriodStrategy {
 			return startTime;
 		}
 
-		// prepare next period ahead
+		// prepare next period ahead，57min
 		if (now - m_lastStartTime >= m_duration - m_aheadTime) {
 			m_lastStartTime = startTime + m_duration;
 			return startTime + m_duration;
 		}
 
-		// last period is over
+		// last period is over   63
 		if (now - m_lastEndTime >= m_duration + m_extraTime) {
 			long lastEndTime = m_lastEndTime;
 			m_lastEndTime = startTime;

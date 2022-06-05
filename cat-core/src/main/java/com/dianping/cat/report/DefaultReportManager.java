@@ -301,7 +301,7 @@ public class DefaultReportManager<T> extends ContainerHolder implements ReportMa
 			t.addData("reports", reports == null ? 0 : reports.size());
 
 			if (reports != null) {
-				Set<String> errorDomains = new HashSet<String>();
+				Set<String> errorDomains = new HashSet<>();
 
 				for (String domain : reports.keySet()) {
 					if (!m_validator.validate(domain)) {

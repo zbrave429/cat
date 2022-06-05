@@ -22,9 +22,9 @@ import java.io.IOException;
 
 public interface ReportBucketManager {
 
-	public void closeBucket(ReportBucket bucket);
+    public void closeBucket(ReportBucket bucket);
 
-	public void clearOldReports();
+    public void clearOldReports();
 
-	public ReportBucket getReportBucket(long timestamp, String name, int index) throws IOException;
+    ReportBucket getReportBucket(long timestamp, String name, int index) throws IOException;
 }

@@ -18,21 +18,9 @@
  */
 package com.dianping.cat.report;
 
-import java.io.BufferedOutputStream;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.RandomAccessFile;
-import java.util.Collection;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.locks.ReentrantLock;
-
+import com.dianping.cat.Cat;
+import com.dianping.cat.config.server.ServerConfigManager;
+import com.dianping.cat.message.PathBuilder;
 import org.codehaus.plexus.logging.LogEnabled;
 import org.codehaus.plexus.logging.Logger;
 import org.unidal.helper.Splitters;
@@ -40,9 +28,10 @@ import org.unidal.helper.Splitters.StringSplitter;
 import org.unidal.lookup.annotation.Inject;
 import org.unidal.lookup.annotation.Named;
 
-import com.dianping.cat.Cat;
-import com.dianping.cat.config.server.ServerConfigManager;
-import com.dianping.cat.message.PathBuilder;
+import java.io.*;
+import java.nio.charset.StandardCharsets;
+import java.util.*;
+import java.util.concurrent.locks.ReentrantLock;
 
 @Named(type = ReportBucket.class, instantiationStrategy = Named.PER_LOOKUP)
 public class LocalReportBucket implements ReportBucket, LogEnabled {
@@ -212,9 +201,9 @@ public class LocalReportBucket implements ReportBucket, LogEnabled {
 
 	@Override
 	public boolean storeById(String id, String report) throws IOException {
-		byte[] content = report.getBytes("utf-8");
+		byte[] content = report.getBytes(StandardCharsets.UTF_8);
 		int length = content.length;
-		byte[] num = String.valueOf(length).getBytes("utf-8");
+		byte[] num = String.valueOf(length).getBytes(StandardCharsets.UTF_8);
 
 		m_writeLock.lock();
 
@@ -227,7 +216,7 @@ public class LocalReportBucket implements ReportBucket, LogEnabled {
 
 			long offset = m_writeDataFileLength;
 			String line = id + '\t' + offset + '\n';
-			byte[] data = line.getBytes("utf-8");
+			byte[] data = line.getBytes(StandardCharsets.UTF_8);
 
 			m_writeDataFileLength += num.length + 1 + length + 1;
 			m_writeIndexFile.write(data);

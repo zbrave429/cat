@@ -23,15 +23,15 @@ import java.util.Map;
 public interface ReportDelegate<T> {
     public void afterLoad(Map<String, T> reports);
 
-    public void beforeSave(Map<String, T> reports);
+    void beforeSave(Map<String, T> reports);
 
     public byte[] buildBinary(T report);
 
     public T parseBinary(byte[] bytes);
 
-    public String buildXml(T report);
+    String buildXml(T report);
 
-    public String getDomain(T report);
+    String getDomain(T report);
 
     T makeReport(String domain, long startTime, long duration);
 
